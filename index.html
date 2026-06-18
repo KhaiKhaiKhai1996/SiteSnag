@@ -15,7 +15,6 @@
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,sans-serif;}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity .2s;}
 .screen.hidden{opacity:0;pointer-events:none;}
-/* HOME */
 #homeScreen{justify-content:flex-start;align-items:center;overflow-y:auto;}
 .home-inner{width:100%;max-width:480px;padding:60px 22px 40px;}
 .logo{font-size:28px;font-weight:700;margin-bottom:4px;}.logo span{color:var(--ac);}
@@ -36,7 +35,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .proj-meta{font-size:12px;color:var(--tx2);margin-top:2px;}
 .proj-del{padding:6px 10px;background:transparent;border:none;color:var(--tx3);font-size:20px;cursor:pointer;}
 .no-proj{font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;}
-/* PLAN */
 #planScreen{background:#141720;}
 .plan-bar{display:flex;align-items:center;gap:10px;padding:52px 14px 11px;background:var(--s);border-bottom:.5px solid var(--bd);flex-shrink:0;}
 .plan-title{font-size:15px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -45,7 +43,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .pg-btn{width:28px;height:28px;border-radius:6px;background:var(--s2);border:.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;}
 .pg-lbl{font-size:12px;color:var(--tx2);}
 .canvas-wrap{flex:1;overflow:hidden;position:relative;}
-#planCanvas{position:absolute;top:0;left:0;touch-action:none;}
+/* TWO CANVASES — plan underneath, annotation on top */
+#planCanvas{position:absolute;top:0;left:0;}
+#annotCanvas{position:absolute;top:0;left:0;touch-action:none;background:transparent;}
 .pin-layer{position:absolute;top:0;left:0;pointer-events:none;}
 .pin{position:absolute;transform:translate(-50%,-100%);pointer-events:all;cursor:pointer;display:flex;flex-direction:column;align-items:center;user-select:none;}
 .pin-head{width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.5);}
@@ -56,20 +56,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .pin.moderate .pin-head{background:var(--or);}
 .pin.critical .pin-head{background:var(--rd);}
 .pin.none .pin-head{background:var(--ac);}
-/* STATUS BAR */
 .status-bar{display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:var(--s);border-bottom:.5px solid var(--bd);flex-shrink:0;}
 .status-mode{font-size:12px;font-weight:600;color:var(--ac);}
 .status-save{font-size:11px;color:var(--gr);opacity:0;transition:opacity .3s;}
 .status-save.show{opacity:1;}
-/* ZOOM */
 .zoom-wrap{position:absolute;right:12px;bottom:76px;display:flex;flex-direction:column;gap:6px;z-index:10;}
 .z-btn{width:38px;height:38px;border-radius:10px;background:var(--s);border:.5px solid var(--bd2);color:var(--tx);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);}
-/* TOOLBAR */
 .toolbar{display:flex;align-items:center;padding:0 0 env(safe-area-inset-bottom);background:var(--s);border-top:.5px solid var(--bd);flex-shrink:0;}
 .tb-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 12px;cursor:pointer;border:none;background:transparent;color:var(--tx2);font-size:10px;font-weight:500;}
 .tb-icon{font-size:20px;}
 .tb-btn.active{color:var(--ac);}
-/* OVERLAY / SHEET */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;}
 .overlay.open{opacity:1;pointer-events:all;}
 .sheet{background:var(--s);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);padding-bottom:env(safe-area-inset-bottom);}
@@ -91,7 +87,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .chip.sev-critical.on{background:var(--rd);border-color:var(--rd);}
 .compass{display:grid;grid-template-columns:repeat(3,auto);gap:5px;width:fit-content;}
 .compass-mid{font-size:10px;color:var(--tx3);display:flex;align-items:center;justify-content:center;padding:6px 10px;}
-/* PHOTOS */
 .photo-box{background:var(--s2);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;}
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
 .p-thumb{aspect-ratio:1;border-radius:var(--rs);overflow:hidden;position:relative;background:var(--bg);}
@@ -100,11 +95,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .cam-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--s);border:1px dashed var(--bd2);border-radius:var(--rs);color:var(--tx2);font-size:14px;font-weight:500;cursor:pointer;}
 #camInput{display:none;}
 .p-loading{font-size:12px;color:var(--tx2);text-align:center;padding:6px;}
-/* SAVE BTN */
 .btn-save{width:100%;padding:15px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:700;cursor:pointer;}
 .btn-save:active{background:var(--ac2);}
 .btn-del-pin{width:100%;padding:12px;background:transparent;color:var(--rd);border:.5px solid rgba(239,68,68,.35);border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;margin-top:6px;}
-/* LOG */
 .log-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
 .log-card{background:var(--s);border:.5px solid var(--bd);border-radius:var(--r);padding:13px;display:flex;gap:10px;cursor:pointer;}
 .log-card:active{background:var(--s2);}
@@ -119,17 +112,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .sev-tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;color:#fff;flex-shrink:0;height:fit-content;}
 .sev-tag.nil{background:var(--gr);}.sev-tag.minor{background:var(--yw);color:#000;}.sev-tag.moderate{background:var(--or);}.sev-tag.critical{background:var(--rd);}.sev-tag.none{background:var(--s2);color:var(--tx2);}
 .empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--tx3);font-size:14px;text-align:center;padding:40px;}
-/* REPORT */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
 .stat-box{background:var(--s2);border-radius:var(--rs);padding:11px;text-align:center;}
 .stat-n{font-size:22px;font-weight:700;}.stat-l{font-size:11px;color:var(--tx2);margin-top:2px;}
 .n-t{color:var(--ac);}.n-nil{color:var(--gr);}.n-w{color:var(--yw);}.n-c{color:var(--rd);}
 .export-note{font-size:13px;color:var(--tx2);background:var(--s2);border-radius:var(--rs);padding:12px;line-height:1.6;margin-bottom:14px;}
 .btn-export{width:100%;padding:14px;background:var(--gr);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;}
-/* TOAST */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--s);border:.5px solid var(--bd2);border-radius:20px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--tx);box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* LOG TOPBAR */
 .topbar{display:flex;align-items:center;gap:12px;padding:52px 18px 13px;background:var(--s);border-bottom:.5px solid var(--bd);flex-shrink:0;}
 .topbar-title{font-size:17px;font-weight:600;flex:1;}
 </style>
@@ -171,6 +161,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   </div>
   <div class="canvas-wrap" id="canvasWrap">
     <canvas id="planCanvas"></canvas>
+    <canvas id="annotCanvas"></canvas>
     <div class="pin-layer" id="pinLayer"></div>
     <div class="zoom-wrap">
       <div class="z-btn" onclick="doZoom(1.3)">+</div>
@@ -182,7 +173,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <div class="tb-btn" id="tbPin" onclick="setMode('pin')"><div class="tb-icon">📍</div>Pin</div>
     <div class="tb-btn active" id="tbPan" onclick="setMode('pan')"><div class="tb-icon">✋</div>Pan</div>
     <div class="tb-btn" id="tbDraw" onclick="setMode('draw')"><div class="tb-icon">✏️</div>Draw</div>
-    <div class="tb-btn" id="tbErase" onclick="setMode('erase')"><div class="tb-icon">⬛</div>Erase</div>
+    <div class="tb-btn" id="tbErase" onclick="setMode('erase')"><div class="tb-icon">⬜</div>Erase</div>
     <div class="tb-btn" onclick="showReport()"><div class="tb-icon">📋</div>Report</div>
   </div>
 </div>
@@ -209,7 +200,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <div><label class="flabel">Zone / ID</label>
       <input class="finput" id="fZone" type="text" placeholder="e.g. B2, Column C1, Slab L3"></div>
     <div><label class="flabel">Element type</label>
-      <div class="chips" id="elemChips">
+      <div class="chips">
         <div class="chip" data-g="elem" data-v="Slab">Slab</div>
         <div class="chip" data-g="elem" data-v="Beam">Beam</div>
         <div class="chip" data-g="elem" data-v="Column">Column</div>
@@ -267,9 +258,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <label class="flabel">Photos <span id="photoCount" style="color:var(--tx3);font-weight:400;text-transform:none;letter-spacing:0;"></span></label>
       <div class="photo-box">
         <div class="photo-grid" id="photoGrid"></div>
-        <div id="photoLoading" class="p-loading" style="display:none;">Loading…</div>
-        <div class="cam-btn" onclick="document.getElementById('camInput').click()">📷 Take / choose photo</div>
-        <input type="file" id="camInput" accept="image/*" capture="environment" multiple onchange="handlePhotos(this)">
+        <div id="photoLoading" class="p-loading" style="display:none;">Loading photos…</div>
+        <!-- NO capture attribute = shows both camera AND gallery -->
+        <div class="cam-btn" onclick="document.getElementById('camInput').click()">📷 Camera &nbsp;|&nbsp; 🖼 Gallery</div>
+        <input type="file" id="camInput" accept="image/*" multiple onchange="handlePhotos(this)">
       </div>
     </div>
     <div><label class="flabel">Remarks</label>
@@ -297,7 +289,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="stat-box"><div class="stat-n n-w" id="rW">0</div><div class="stat-l">Minor/Mod</div></div>
       <div class="stat-box"><div class="stat-n n-c" id="rC">0</div><div class="stat-l">Critical</div></div>
     </div>
-    <div class="export-note">Export creates a self-contained HTML file with all photos.<br>Safari → Share → Print → Save as PDF.</div>
+    <div class="export-note">Export creates a self-contained HTML file with all photos embedded.<br>Chrome → Share → Print → Save as PDF.</div>
     <button class="btn-export" onclick="exportReport()">⬇ Export inspection report</button>
     <button class="btn-sec" style="margin-top:0;" onclick="newProject()">New project / clear</button>
     <div style="height:8px;"></div>
@@ -314,22 +306,20 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 let db;
 function openDB(){
   return new Promise((res,rej)=>{
-    const r=indexedDB.open('sitesnag_v3',1);
+    const r=indexedDB.open('sitesnag_v4',1);
     r.onupgradeneeded=e=>{
       const d=e.target.result;
-      if(!d.objectStoreNames.contains('projects')) d.createObjectStore('projects',{keyPath:'id'});
-      if(!d.objectStoreNames.contains('photos'))   d.createObjectStore('photos',{keyPath:'id'});
-      if(!d.objectStoreNames.contains('plans'))    d.createObjectStore('plans',{keyPath:'id'});
+      ['projects','photos','plans'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});});
     };
     r.onsuccess=e=>{db=e.target.result;res(db);};
-    r.onerror=e=>{console.error('DB error',e);rej(e);};
+    r.onerror=e=>rej(e);
   });
 }
-const tx=(s,m)=>db.transaction(s,m).objectStore(s);
-function put(s,o){return new Promise((r,j)=>{const req=tx(s,'readwrite').put(o);req.onsuccess=()=>r();req.onerror=j;});}
-function get(s,k){return new Promise((r,j)=>{const req=tx(s,'readonly').get(k);req.onsuccess=e=>r(e.target.result);req.onerror=j;});}
-function del(s,k){return new Promise((r,j)=>{const req=tx(s,'readwrite').delete(k);req.onsuccess=()=>r();req.onerror=j;});}
-function all(s){return new Promise((r,j)=>{const req=tx(s,'readonly').getAll();req.onsuccess=e=>r(e.target.result);req.onerror=j;});}
+const txs=(s,m)=>db.transaction(s,m).objectStore(s);
+function put(s,o){return new Promise((r,j)=>{txs(s,'readwrite').put(o).onsuccess=()=>r();});}
+function get(s,k){return new Promise((r,j)=>{const req=txs(s,'readonly').get(k);req.onsuccess=e=>r(e.target.result);req.onerror=j;});}
+function del(s,k){return new Promise((r,j)=>{txs(s,'readwrite').delete(k).onsuccess=()=>r();});}
+function all(s){return new Promise((r,j)=>{const req=txs(s,'readonly').getAll();req.onsuccess=e=>r(e.target.result);req.onerror=j;});}
 
 // ── State ─────────────────────────────────────────────────
 let pdfDoc=null,curPage=1,totalPages=1;
@@ -338,45 +328,67 @@ let pins=[],editId=null,dropX=0,dropY=0;
 let curPhotos=[];
 let selE=new Set(),selD=new Set(),selDef=new Set(),selSev='';
 let drawing=false,panning=false,panSt=null,panOff=null;
-let annots={},projId=null,projName='Site Plan',saveTimer=null;
-// Touch state for reliable pan + tap detection
+// Separate annotation data per page — stored as dataURL from annotCanvas only
+let annotData={};
+let projId=null,projName='Site Plan',saveTimer=null;
 let touchSt=null;
+
+// ── Annot canvas helpers ───────────────────────────────────
+function getAnnotCtx(){return document.getElementById('annotCanvas').getContext('2d');}
+
+function saveAnnotData(){
+  const ac=document.getElementById('annotCanvas');
+  if(ac.width>0) annotData[curPage]=ac.toDataURL('image/png');
+}
+
+function restoreAnnotData(page){
+  const ac=document.getElementById('annotCanvas');
+  const ctx=ac.getContext('2d');
+  ctx.clearRect(0,0,ac.width,ac.height);
+  if(annotData[page]){
+    const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,ac.width,ac.height);img.src=annotData[page];
+  }
+}
+
+function sizeAnnotCanvas(){
+  const pc=document.getElementById('planCanvas'),ac=document.getElementById('annotCanvas');
+  ac.width=pc.width;ac.height=pc.height;
+  ac.style.width=pc.style.width;ac.style.height=pc.style.height;
+  ac.style.left=pc.style.left;ac.style.top=pc.style.top;
+}
 
 // ── Toast ─────────────────────────────────────────────────
 function toast(msg,dur=2200){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
 
 // ── Screens ───────────────────────────────────────────────
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id));}
-function goHome(){saveAnnots();showScreen('homeScreen');loadProjList();}
+function goHome(){saveAnnotData();showScreen('homeScreen');loadProjList();}
 function showLog(){renderLog();showScreen('logScreen');}
 function closeOverlay(id){document.getElementById(id).classList.remove('open');}
 
 // ── Project list ──────────────────────────────────────────
 async function loadProjList(){
   const list=document.getElementById('projList');
-  const ps=await all('projects');
-  ps.sort((a,b)=>b.savedAt-a.savedAt);
+  const ps=await all('projects');ps.sort((a,b)=>b.savedAt-a.savedAt);
   if(!ps.length){list.innerHTML='<div class="no-proj">No saved projects yet.</div>';return;}
   list.innerHTML=ps.map(p=>{
     const d=new Date(p.savedAt).toLocaleDateString('en-SG',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return `<div class="proj-card" onclick="resumeProj('${p.id}')">
+    return`<div class="proj-card" onclick="resumeProj('${p.id}')">
       <div class="proj-info"><div class="proj-name">${p.name}</div><div class="proj-meta">${p.pinCount||0} obs · ${d}</div></div>
       <button class="proj-del" onclick="delProj('${p.id}',event)">×</button></div>`;
   }).join('')+`<button class="btn-sec" style="margin-top:4px;" onclick="document.getElementById('fileInput').click()">+ New project from plan</button>`;
 }
 
 async function delProj(id,e){
-  e.stopPropagation();
-  if(!confirm('Delete project and all photos?'))return;
+  e.stopPropagation();if(!confirm('Delete project and all photos?'))return;
   const p=await get('projects',id);
   if(p&&p.pins)for(const pin of p.pins)for(const pid of(pin.photoIds||[]))await del('photos',pid);
-  await del('projects',id);await del('plans',id);
-  loadProjList();toast('Deleted');
+  await del('projects',id);await del('plans',id);loadProjList();toast('Deleted');
 }
 
 async function resumeProj(id){
   const p=await get('projects',id);if(!p){toast('Could not load');return;}
-  projId=p.id;projName=p.name;pins=p.pins||[];annots=p.annots||{};
+  projId=p.id;projName=p.name;pins=p.pins||[];annotData=p.annotData||{};
   curPage=p.curPage||1;totalPages=p.totalPages||1;
   document.getElementById('planTitle').textContent=projName;
   showScreen('planScreen');
@@ -384,33 +396,22 @@ async function resumeProj(id){
   if(plan&&plan.dataUrl)loadImgUrl(plan.dataUrl);
   else blankCanvas();
   if(totalPages>1)document.getElementById('pageNav').style.display='flex';
-  updatePgLbl();
-  toast('Resumed: '+projName);
+  updatePgLbl();toast('Resumed: '+projName);
 }
 
 // ── File handling ─────────────────────────────────────────
 function handleFile(inp){
   const f=inp.files[0];if(!f)return;
-  projName=f.name.replace(/\.[^.]+$/,'');
-  projId='p'+Date.now();pins=[];annots={};curPage=1;
+  projName=f.name.replace(/\.[^.]+$/,'');projId='p'+Date.now();pins=[];annotData={};curPage=1;
   document.getElementById('planTitle').textContent=projName;
-  if(f.type==='application/pdf'){
-    const fr=new FileReader();fr.onload=e=>loadPDF(e.target.result);fr.readAsArrayBuffer(f);
-  } else {
-    const fr=new FileReader();
-    fr.onload=e=>{
-      loadImgUrl(e.target.result);
-      put('plans',{id:projId,dataUrl:e.target.result});
-    };
-    fr.readAsDataURL(f);
-  }
+  if(f.type==='application/pdf'){const fr=new FileReader();fr.onload=e=>loadPDF(e.target.result);fr.readAsArrayBuffer(f);}
+  else{const fr=new FileReader();fr.onload=e=>{loadImgUrl(e.target.result);put('plans',{id:projId,dataUrl:e.target.result});};fr.readAsDataURL(f);}
   inp.value='';
 }
 
 function startBlank(){
-  projName='Blank';projId='p'+Date.now();pins=[];annots={};
-  document.getElementById('planTitle').textContent=projName;
-  showScreen('planScreen');blankCanvas();
+  projName='Blank';projId='p'+Date.now();pins=[];annotData={};
+  document.getElementById('planTitle').textContent=projName;showScreen('planScreen');blankCanvas();
 }
 
 function blankCanvas(){
@@ -422,7 +423,7 @@ function blankCanvas(){
   ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=0.5;
   for(let x=0;x<cv.width;x+=40*dpr){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,cv.height);ctx.stroke();}
   for(let y=0;y<cv.height;y+=40*dpr){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(cv.width,y);ctx.stroke();}
-  setMode('pan');renderPins();
+  sizeAnnotCanvas();restoreAnnotData(curPage);setMode('pan');renderPins();
 }
 
 async function loadPDF(buf){
@@ -437,16 +438,14 @@ async function renderPDFPage(n){
   const page=await pdfDoc.getPage(n);
   const wrap=document.getElementById('canvasWrap'),cv=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
   const vw=wrap.clientWidth,vh=wrap.clientHeight;
-  const vp0=page.getViewport({scale:1});
-  const fit=Math.min(vw/vp0.width,vh/vp0.height);
+  const vp0=page.getViewport({scale:1});const fit=Math.min(vw/vp0.width,vh/vp0.height);
   const vp=page.getViewport({scale:fit*dpr});
   cv.width=vp.width;cv.height=vp.height;
   cv.style.width=(vp.width/dpr)+'px';cv.style.height=(vp.height/dpr)+'px';
   offX=(vw-vp.width/dpr)/2;offY=(vh-vp.height/dpr)/2;posCV();
-  const ctx=cv.getContext('2d');
-  await page.render({canvasContext:ctx,viewport:vp}).promise;
+  await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
   if(n===1)put('plans',{id:projId,dataUrl:cv.toDataURL('image/jpeg',0.6)});
-  if(annots[n]){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,cv.width,cv.height);img.src=annots[n];}
+  sizeAnnotCanvas();restoreAnnotData(n);
   updatePgLbl();renderPins();
 }
 
@@ -460,20 +459,24 @@ function loadImgUrl(dataUrl){
     cv.style.width=(img.width*fit)+'px';cv.style.height=(img.height*fit)+'px';
     offX=(vw-img.width*fit)/2;offY=(vh-img.height*fit)/2;posCV();
     cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
-    setMode('pan');renderPins();
+    sizeAnnotCanvas();restoreAnnotData(curPage);setMode('pan');renderPins();
   };img.src=dataUrl;
 }
 
 function posCV(){
-  const cv=document.getElementById('planCanvas');
+  const cv=document.getElementById('planCanvas'),ac=document.getElementById('annotCanvas');
   cv.style.left=offX+'px';cv.style.top=offY+'px';
-  document.getElementById('pinLayer').style.left=offX+'px';
-  document.getElementById('pinLayer').style.top=offY+'px';
+  ac.style.left=offX+'px';ac.style.top=offY+'px';
+  document.getElementById('pinLayer').style.left=offX+'px';document.getElementById('pinLayer').style.top=offY+'px';
 }
-function saveAnnots(){const cv=document.getElementById('planCanvas');if(cv.width>0)annots[curPage]=cv.toDataURL('image/jpeg',0.75);}
-function changePage(d){const np=curPage+d;if(np<1||np>totalPages)return;saveAnnots();curPage=np;renderPDFPage(curPage);}
+
+function changePage(d){const np=curPage+d;if(np<1||np>totalPages)return;saveAnnotData();curPage=np;renderPDFPage(curPage);}
 function updatePgLbl(){document.getElementById('pgLbl').textContent=curPage+'/'+totalPages;document.getElementById('pageNav').style.display=totalPages>1?'flex':'none';}
-function doZoom(f){const cv=document.getElementById('planCanvas');cv.style.width=(parseFloat(cv.style.width)*f)+'px';cv.style.height=(parseFloat(cv.style.height)*f)+'px';renderPins();}
+function doZoom(f){
+  const cv=document.getElementById('planCanvas'),ac=document.getElementById('annotCanvas');
+  const nw=(parseFloat(cv.style.width)*f)+'px',nh=(parseFloat(cv.style.height)*f)+'px';
+  cv.style.width=nw;cv.style.height=nh;ac.style.width=nw;ac.style.height=nh;renderPins();
+}
 function fitPlan(){if(pdfDoc)renderPDFPage(curPage);}
 
 // ── Mode ──────────────────────────────────────────────────
@@ -482,107 +485,77 @@ function setMode(m){
   ['tbPin','tbPan','tbDraw','tbErase'].forEach(id=>document.getElementById(id).classList.remove('active'));
   const map={pin:'tbPin',pan:'tbPan',draw:'tbDraw',erase:'tbErase'};
   if(map[m])document.getElementById(map[m]).classList.add('active');
-  const msgs={pin:'PIN MODE — tap anywhere to place a pin',pan:'PAN MODE — drag to navigate',draw:'DRAW MODE — draw on plan',erase:'ERASE MODE — erase drawings'};
+  const msgs={pin:'PIN MODE — tap to place a pin',pan:'PAN MODE — drag to navigate',draw:'DRAW MODE — draw on plan',erase:'ERASE MODE — rub to erase drawing'};
   document.getElementById('statusMode').textContent=msgs[m]||'';
 }
 
-// ── Touch/pointer events ───────────────────────────────────
-// Strategy: use touchstart/touchmove/touchend for iPad reliability
-// Pan mode: drag freely
-// Pin mode: simple TAP (touchend without much movement) drops pin immediately — no long press needed
-// Draw/erase: finger draws
+// ── Touch events (annotCanvas is on top, receives all touches) ──
+const acEl=document.getElementById('annotCanvas');
 
-const cw=document.getElementById('canvasWrap');
-
-function getTouchPos(touch){
-  const cv=document.getElementById('planCanvas'),r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+function getPos(touch){
+  const ac=document.getElementById('annotCanvas'),r=ac.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
   return{cx:(touch.clientX-r.left)*dpr,cy:(touch.clientY-r.top)*dpr,lx:touch.clientX-offX,ly:touch.clientY-offY,px:touch.clientX,py:touch.clientY};
 }
 
-cw.addEventListener('touchstart',e=>{
+acEl.addEventListener('touchstart',e=>{
   e.preventDefault();
-  const t=e.touches[0];
-  const pos=getTouchPos(t);
+  const t=e.touches[0],pos=getPos(t);
   touchSt={x:t.clientX,y:t.clientY,time:Date.now(),pos};
-  if(mode==='pan'){panning=true;panSt={x:t.clientX,y:t.clientY};panOff={x:offX,y:offY};}
-  else if(mode==='draw'){
+  if(mode==='pan'){
+    panning=true;panSt={x:t.clientX,y:t.clientY};panOff={x:offX,y:offY};
+  } else if(mode==='draw'){
     drawing=true;
-    const ctx=document.getElementById('planCanvas').getContext('2d');
-    ctx.strokeStyle='#4f8ef7';ctx.lineWidth=3*(window.devicePixelRatio||1);ctx.lineCap='round';ctx.lineJoin='round';
-    ctx.beginPath();ctx.moveTo(pos.cx,pos.cy);
+    const ctx=getAnnotCtx();
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle='#4f8ef7';ctx.lineWidth=3*(window.devicePixelRatio||1);
+    ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(pos.cx,pos.cy);
   } else if(mode==='erase'){
     drawing=true;
-    const ctx=document.getElementById('planCanvas').getContext('2d');
+    const ctx=getAnnotCtx();
+    // destination-out on transparent canvas = true erase, no black paint
     ctx.globalCompositeOperation='destination-out';
-    ctx.strokeStyle='rgba(0,0,0,1)';ctx.lineWidth=36*(window.devicePixelRatio||1);ctx.lineCap='round';ctx.lineJoin='round';
-    ctx.beginPath();ctx.moveTo(pos.cx,pos.cy);
+    ctx.strokeStyle='rgba(0,0,0,1)';ctx.lineWidth=40*(window.devicePixelRatio||1);
+    ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(pos.cx,pos.cy);
   }
 },{passive:false});
 
-cw.addEventListener('touchmove',e=>{
+acEl.addEventListener('touchmove',e=>{
   e.preventDefault();
-  const t=e.touches[0],pos=getTouchPos(t);
+  const t=e.touches[0],pos=getPos(t);
+  // cancel pan detection if moved
+  if(touchSt&&mode==='pin'){
+    const dx=t.clientX-touchSt.x,dy=t.clientY-touchSt.y;
+    if(Math.sqrt(dx*dx+dy*dy)>10)touchSt=null;
+  }
   if(mode==='pan'&&panning){
     offX=panOff.x+(t.clientX-panSt.x);offY=panOff.y+(t.clientY-panSt.y);posCV();
   } else if((mode==='draw'||mode==='erase')&&drawing){
-    const ctx=document.getElementById('planCanvas').getContext('2d');ctx.lineTo(pos.cx,pos.cy);ctx.stroke();
+    getAnnotCtx().lineTo(pos.cx,pos.cy);getAnnotCtx().stroke();
   }
 },{passive:false});
 
-cw.addEventListener('touchend',e=>{
+acEl.addEventListener('touchend',e=>{
   e.preventDefault();
   if(mode==='pin'&&touchSt){
-    // Detect tap: minimal movement and short duration
     const ch=e.changedTouches[0];
     const dx=ch.clientX-touchSt.x,dy=ch.clientY-touchSt.y;
-    const dist=Math.sqrt(dx*dx+dy*dy);
-    const dur=Date.now()-touchSt.time;
-    if(dist<12&&dur<600){
-      // It's a tap — drop pin at that position
-      dropX=touchSt.pos.lx;dropY=touchSt.pos.ly;
-      openPinSheet(null);
+    if(Math.sqrt(dx*dx+dy*dy)<12&&(Date.now()-touchSt.time)<600){
+      dropX=touchSt.pos.lx;dropY=touchSt.pos.ly;openPinSheet(null);
     }
   }
   if(mode==='pan')panning=false;
   if(mode==='draw'||mode==='erase'){
     drawing=false;
-    document.getElementById('planCanvas').getContext('2d').globalCompositeOperation='source-over';
-    saveAnnots();triggerSave();
+    // reset composite op
+    getAnnotCtx().globalCompositeOperation='source-over';
+    saveAnnotData();triggerSave();
   }
   touchSt=null;
 },{passive:false});
 
-cw.addEventListener('touchcancel',()=>{
+acEl.addEventListener('touchcancel',()=>{
   panning=false;drawing=false;touchSt=null;
-  document.getElementById('planCanvas').getContext('2d').globalCompositeOperation='source-over';
-});
-
-// Also support mouse for desktop testing
-cw.addEventListener('mousedown',e=>{
-  if(mode==='pin'){dropX=e.clientX-offX;dropY=e.clientY-offY;openPinSheet(null);}
-  else if(mode==='pan'){panning=true;panSt={x:e.clientX,y:e.clientY};panOff={x:offX,y:offY};}
-  else if(mode==='draw'||mode==='erase'){
-    drawing=true;const cv=document.getElementById('planCanvas'),r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
-    const ctx=cv.getContext('2d');
-    if(mode==='draw'){ctx.globalCompositeOperation='source-over';ctx.strokeStyle='#4f8ef7';ctx.lineWidth=3*dpr;}
-    else{ctx.globalCompositeOperation='destination-out';ctx.strokeStyle='rgba(0,0,0,1)';ctx.lineWidth=36*dpr;}
-    ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo((e.clientX-r.left)*dpr,(e.clientY-r.top)*dpr);
-  }
-});
-cw.addEventListener('mousemove',e=>{
-  if(mode==='pan'&&panning){offX=panOff.x+(e.clientX-panSt.x);offY=panOff.y+(e.clientY-panSt.y);posCV();}
-  else if((mode==='draw'||mode==='erase')&&drawing){
-    const cv=document.getElementById('planCanvas'),r=cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
-    const ctx=cv.getContext('2d');ctx.lineTo((e.clientX-r.left)*dpr,(e.clientY-r.top)*dpr);ctx.stroke();
-  }
-});
-cw.addEventListener('mouseup',()=>{
-  panning=false;
-  if(drawing){
-    drawing=false;
-    document.getElementById('planCanvas').getContext('2d').globalCompositeOperation='source-over';
-    saveAnnots();triggerSave();
-  }
+  getAnnotCtx().globalCompositeOperation='source-over';
 });
 
 // ── Chips ─────────────────────────────────────────────────
@@ -616,10 +589,13 @@ async function handlePhotos(inp){
 
 async function loadPinPhotos(ids){
   curPhotos=[];
+  if(!ids||!ids.length){renderPhotoGrid();return;}
   document.getElementById('photoLoading').style.display='block';
-  for(const id of(ids||[])){
-    const r=await get('photos',id);
-    if(r)curPhotos.push({id,url:URL.createObjectURL(r.blob)});
+  for(const id of ids){
+    try{
+      const r=await get('photos',id);
+      if(r&&r.blob){curPhotos.push({id,url:URL.createObjectURL(r.blob)});}
+    }catch(e){console.warn('Photo load failed',id,e);}
   }
   document.getElementById('photoLoading').style.display='none';
   renderPhotoGrid();
@@ -630,11 +606,17 @@ function renderPhotoGrid(){
   curPhotos.forEach((p,i)=>{
     const d=document.createElement('div');d.className='p-thumb';
     const img=document.createElement('img');img.src=p.url;
+    img.onerror=()=>{img.src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23333" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%23888" font-size="30">?</text></svg>';};
     const x=document.createElement('div');x.className='p-del';x.textContent='×';
-    x.onclick=ev=>{ev.stopPropagation();URL.revokeObjectURL(curPhotos[i].url);del('photos',curPhotos[i].id);curPhotos.splice(i,1);renderPhotoGrid();};
+    x.onclick=ev=>{
+      ev.stopPropagation();
+      URL.revokeObjectURL(curPhotos[i].url);
+      del('photos',curPhotos[i].id);
+      curPhotos.splice(i,1);renderPhotoGrid();
+    };
     d.appendChild(img);d.appendChild(x);g.appendChild(d);
   });
-  document.getElementById('photoCount').textContent=curPhotos.length?`(${curPhotos.length})`:'';
+  document.getElementById('photoCount').textContent=curPhotos.length?`(${curPhotos.length} photo${curPhotos.length>1?'s':''})`:'' ;
 }
 
 // ── Pin sheet ─────────────────────────────────────────────
@@ -644,14 +626,19 @@ async function openPinSheet(id){
   document.getElementById('fRemarks').value='';
   document.getElementById('sheetTitle').textContent=id?'Edit observation':'New observation';
   document.getElementById('delPinBtn').style.display=id?'block':'none';
-  renderPhotoGrid();
+  document.getElementById('photoGrid').innerHTML='';
+  document.getElementById('photoCount').textContent='';
   if(id){
     const pin=pins.find(p=>p.id===id);
     if(pin){
       document.getElementById('fZone').value=pin.zone||'';
       document.getElementById('fRemarks').value=pin.remarks||'';
       selE=new Set(pin.elems||[]);selD=new Set(pin.dirs||[]);selDef=new Set(pin.defects||[]);selSev=pin.sev||'';
+      syncChips();
+      document.getElementById('pinOverlay').classList.add('open');
+      // load photos AFTER sheet is open so user sees it loading
       await loadPinPhotos(pin.photoIds||[]);
+      return;
     }
   }
   syncChips();
@@ -673,10 +660,7 @@ async function savePin(){
   } else {
     pins.push({id:Date.now(),x:dropX,y:dropY,zone,sev:selSev,elems:[...selE],dirs:[...selD],defects:[...selDef],photoIds,remarks,page:curPage,time:new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})});
   }
-  closeSheet();
-  renderPins();
-  await triggerSave();
-  toast('✓ Saved');
+  closeSheet();renderPins();await triggerSave();toast('✓ Saved');
 }
 
 async function deletePin(){
@@ -693,8 +677,8 @@ function renderPins(){
   const sw=parseFloat(cv.style.width)||(cv.width/dpr);
   const sh=parseFloat(cv.style.height)||(cv.height/dpr);
   const sx=sw/(cv.width/dpr)||1,sy=sh/(cv.height/dpr)||1;
-  const pg=pins.filter(p=>(p.page||1)===curPage);
   layer.style.width=sw+'px';layer.style.height=sh+'px';
+  const pg=pins.filter(p=>(p.page||1)===curPage);
   layer.innerHTML=pg.map((p,i)=>`
     <div class="pin ${p.sev||'none'}" style="left:${p.x*sx}px;top:${p.y*sy}px;" onclick="openPinSheet(${p.id})">
       <div class="pin-head"><span class="pin-num">${i+1}</span></div>
@@ -703,25 +687,24 @@ function renderPins(){
 }
 
 // ── Save ──────────────────────────────────────────────────
-async function triggerSave(){
+function triggerSave(){
   clearTimeout(saveTimer);
   return new Promise(res=>{
     saveTimer=setTimeout(async()=>{
       try{
-        saveAnnots();
-        await put('projects',{id:projId,name:projName,pins,annots,curPage,totalPages,pinCount:pins.length,savedAt:Date.now()});
-        const dot=document.getElementById('statusSave');
-        dot.classList.add('show');setTimeout(()=>dot.classList.remove('show'),2000);
-      }catch(e){console.error('Save failed',e);toast('⚠ Save failed: '+e.message);}
+        saveAnnotData();
+        await put('projects',{id:projId,name:projName,pins,annotData,curPage,totalPages,pinCount:pins.length,savedAt:Date.now()});
+        const dot=document.getElementById('statusSave');dot.classList.add('show');setTimeout(()=>dot.classList.remove('show'),2000);
+      }catch(e){toast('⚠ Save error: '+e.message);}
       res();
-    },400);
+    },500);
   });
 }
 
 // ── Log ───────────────────────────────────────────────────
 async function renderLog(){
   const list=document.getElementById('logList');
-  if(!pins.length){list.innerHTML='<div class="empty"><div>No observations yet.</div><div style="font-size:13px;margin-top:6px;">Go to plan → tap Pin → tap on plan to drop.</div></div>';return;}
+  if(!pins.length){list.innerHTML='<div class="empty"><div>No observations yet.</div><div style="font-size:13px;margin-top:6px;">Go to plan → tap Pin → tap on plan.</div></div>';return;}
   list.innerHTML=pins.map((p,i)=>{
     const sc=p.sev||'none',sl=(p.sev||'—').toUpperCase();
     return`<div class="log-card" onclick="goToPin(${p.id})">
@@ -731,23 +714,23 @@ async function renderLog(){
         <div class="log-sub">${p.elems?.join(', ')||''} · ${p.time||''} · Pg ${p.page||1}</div>
         <div class="log-def">${p.defects?.join(', ')||'No defect noted'}</div>
         ${p.dirs?.length?`<div class="log-sub" style="margin-top:2px;">Dir: ${p.dirs.join(', ')}</div>`:''}
-        ${p.remarks?`<div class="log-def" style="margin-top:3px;font-style:italic;">"${p.remarks}"</div>`:''}
+        ${p.remarks?`<div class="log-def" style="font-style:italic;margin-top:3px;">"${p.remarks}"</div>`:''}
         ${(p.photoIds||[]).length?`<div class="log-photos" id="lp_${p.id}"></div>`:''}
       </div>
       <div class="sev-tag ${sc}">${sl}</div></div>`;
   }).join('');
+  // load thumbs async
   for(const p of pins){
     const el=document.getElementById('lp_'+p.id);if(!el)continue;
     for(const pid of(p.photoIds||[]).slice(0,3)){
-      const r=await get('photos',pid);
-      if(r){const img=document.createElement('img');img.className='log-thumb';img.src=URL.createObjectURL(r.blob);el.appendChild(img);}
+      try{const r=await get('photos',pid);if(r&&r.blob){const img=document.createElement('img');img.className='log-thumb';img.src=URL.createObjectURL(r.blob);el.appendChild(img);}}catch(e){}
     }
   }
 }
 
 function goToPin(id){
   const pin=pins.find(p=>p.id===id);
-  if(pin&&pin.page!==curPage){saveAnnots();curPage=pin.page;renderPDFPage(curPage);}
+  if(pin&&pin.page!==curPage){saveAnnotData();curPage=pin.page;renderPDFPage(curPage);}
   showScreen('planScreen');
 }
 
@@ -769,32 +752,25 @@ async function exportReport(){
   for(const[i,p]of pins.entries()){
     let ph='';
     for(const pid of(p.photoIds||[])){
-      const r=await get('photos',pid);
-      if(r){const b64=await new Promise(res=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.readAsDataURL(r.blob);});
-      ph+=`<img src="${b64}" style="width:70px;height:70px;object-fit:cover;border-radius:5px;margin:2px;">`;}
+      try{const r=await get('photos',pid);if(r&&r.blob){const b64=await new Promise(res=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.readAsDataURL(r.blob);});ph+=`<img src="${b64}" style="width:70px;height:70px;object-fit:cover;border-radius:5px;margin:2px;">`;}}catch(e){}
     }
     rows+=`<tr><td>${i+1}</td><td><strong>${p.zone||'#'+(i+1)}</strong></td><td>${p.elems?.join(', ')||''}</td><td>${p.dirs?.join(', ')||''}</td><td>${p.defects?.join(', ')||''}</td><td><span style="background:${sc[p.sev||'']};color:${p.sev==='minor'?'#000':'#fff'};padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;">${sl[p.sev||'']}</span></td><td>Pg ${p.page||1}</td><td style="font-size:12px;">${p.remarks||''}</td><td>${ph}</td></tr>`;
   }
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Inspection — ${projName} — ${date}</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#111;}h1{font-size:20px;margin-bottom:4px;}.sub{font-size:12px;color:#666;margin-bottom:20px;}.stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}.stat{background:#f5f5f5;border-radius:8px;padding:12px 16px;}.stat-n{font-size:20px;font-weight:700;}.stat-l{font-size:11px;color:#888;}table{width:100%;border-collapse:collapse;font-size:13px;}th{text-align:left;padding:8px;background:#f0f0f0;border-bottom:1px solid #ddd;font-size:12px;}td{padding:9px 8px;border-bottom:.5px solid #eee;vertical-align:top;}tr:nth-child(even){background:#fafafa;}@media print{body{padding:12px;}}</style></head><body><h1>Visual Inspection — ${projName}</h1><div class="sub">Date: ${date} · SiteSnag</div><div class="stats"><div class="stat"><div class="stat-n">${pins.length}</div><div class="stat-l">Total</div></div><div class="stat"><div class="stat-n" style="color:#22c55e">${pins.filter(p=>p.sev==='nil').length}</div><div class="stat-l">Nil</div></div><div class="stat"><div class="stat-n" style="color:#f59e0b">${pins.filter(p=>p.sev==='minor'||p.sev==='moderate').length}</div><div class="stat-l">Minor/Mod</div></div><div class="stat"><div class="stat-n" style="color:#ef4444">${pins.filter(p=>p.sev==='critical').length}</div><div class="stat-l">Critical</div></div></div><table><thead><tr><th>#</th><th>Zone</th><th>Element</th><th>Direction</th><th>Defect</th><th>Severity</th><th>Page</th><th>Remarks</th><th>Photos</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Inspection — ${projName} — ${date}</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#111;}h1{font-size:20px;margin-bottom:4px;}.sub{font-size:12px;color:#666;margin-bottom:20px;}.stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}.stat{background:#f5f5f5;border-radius:8px;padding:12px 16px;}.stat-n{font-size:20px;font-weight:700;}.stat-l{font-size:11px;color:#888;}table{width:100%;border-collapse:collapse;font-size:13px;}th{text-align:left;padding:8px;background:#f0f0f0;border-bottom:1px solid #ddd;font-size:12px;}td{padding:9px 8px;border-bottom:.5px solid #eee;vertical-align:top;}tr:nth-child(even){background:#fafafa;}</style></head><body><h1>Visual Inspection — ${projName}</h1><div class="sub">Date: ${date} · SiteSnag</div><div class="stats"><div class="stat"><div class="stat-n">${pins.length}</div><div class="stat-l">Total</div></div><div class="stat"><div class="stat-n" style="color:#22c55e">${pins.filter(p=>p.sev==='nil').length}</div><div class="stat-l">Nil</div></div><div class="stat"><div class="stat-n" style="color:#f59e0b">${pins.filter(p=>p.sev==='minor'||p.sev==='moderate').length}</div><div class="stat-l">Minor/Mod</div></div><div class="stat"><div class="stat-n" style="color:#ef4444">${pins.filter(p=>p.sev==='critical').length}</div><div class="stat-l">Critical</div></div></div><table><thead><tr><th>#</th><th>Zone</th><th>Element</th><th>Direction</th><th>Defect</th><th>Severity</th><th>Page</th><th>Remarks</th><th>Photos</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
   const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`inspection_${projName.replace(/\s+/g,'_')}.html`;a.click();URL.revokeObjectURL(url);
-  toast('✓ Report exported');
+  const a=document.createElement('a');a.href=url;a.download=`inspection_${projName.replace(/\s+/g,'_')}.html`;a.click();URL.revokeObjectURL(url);toast('✓ Report exported');
 }
 
 function newProject(){
   closeOverlay('reportOverlay');
   if(pins.length>0&&!confirm('Start fresh? Current project stays saved.'))return;
-  projId=null;pins=[];annots={};showScreen('homeScreen');loadProjList();
+  projId=null;pins=[];annotData={};showScreen('homeScreen');loadProjList();
 }
 
 // ── Init ──────────────────────────────────────────────────
 openDB().then(()=>{
   loadProjList();
-  // Show install hint on iOS Safari
-  if(/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.navigator.standalone){
-    toast('Tip: Share → Add to Home Screen for app experience',4000);
-  }
-}).catch(e=>toast('DB error: '+e.message));
+}).catch(e=>alert('DB failed to open: '+e.message));
 </script>
 </body>
 </html>
