@@ -358,6 +358,7 @@ let annotData={};
 let projId=null,projName='Site Plan';
 let touchSt=null;
 let isSaving=false;
+let pdfBuf=null; // keep PDF buffer in memory so page nav works after resume
 
 // ── Global pin number (across all pages, sorted by creation order) ──
 function globalPinNum(pinId){
@@ -470,9 +471,19 @@ async function resumeProj(id){
     document.getElementById('planTitle').textContent=projName;
     showScreen('planScreen');
     const plan=await dbGet('plans',id);
-    if(plan&&plan.dataUrl)loadImgUrl(plan.dataUrl);
-    else blankCanvas();
-    if(totalPages>1)document.getElementById('pageNav').style.display='flex';
+    if(plan&&plan.pdfBuf){
+      // Reload full PDF so page navigation works
+      pdfBuf=plan.pdfBuf;
+      pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(plan.pdfBuf)}).promise;
+      totalPages=pdfDoc.numPages;
+      if(totalPages>1)document.getElementById('pageNav').style.display='flex';
+      await renderPDFPage(curPage);
+      setMode('pan');
+    } else if(plan&&plan.dataUrl){
+      loadImgUrl(plan.dataUrl);
+    } else {
+      blankCanvas();
+    }
     updatePgLbl();toast('Resumed: '+projName);
   }catch(e){toast('Load error: '+e.message);}
 }
@@ -484,7 +495,12 @@ function handleFile(inp){
   document.getElementById('planTitle').textContent=projName;
   if(f.type==='application/pdf'){
     const fr=new FileReader();
-    fr.onload=e=>loadPDF(e.target.result);
+    fr.onload=e=>{
+      pdfBuf=e.target.result;
+      // Store PDF in DB so page nav works on resume
+      dbPut('plans',{id:projId,pdfBuf:pdfBuf}).catch(()=>{});
+      loadPDF(pdfBuf);
+    };
     fr.readAsArrayBuffer(f);
   } else {
     const fr=new FileReader();
@@ -515,6 +531,7 @@ function blankCanvas(){
 async function loadPDF(buf){
   toast('Loading PDF…',3000);
   showScreen('planScreen');
+  pdfBuf=buf;
   try{
     pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
     totalPages=pdfDoc.numPages;curPage=1;
@@ -535,7 +552,9 @@ async function renderPDFPage(n){
     cv.style.width=(vp.width/dpr)+'px';cv.style.height=(vp.height/dpr)+'px';
     offX=(vw-vp.width/dpr)/2;offY=(vh-vp.height/dpr)/2;posCV();
     await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
-    if(n===1)dbPut('plans',{id:projId,dataUrl:cv.toDataURL('image/jpeg',0.65)}).catch(()=>{});
+    if(n===1&&pdfBuf){
+      dbPut('plans',{id:projId,pdfBuf,dataUrl:cv.toDataURL('image/jpeg',0.65)}).catch(()=>{});
+    }
     sizeAnnotCanvas();restoreAnnotData(n);
     updatePgLbl();renderPins();
   }catch(e){toast('Page render error: '+e.message);}
@@ -563,9 +582,13 @@ function posCV(){
   [cv,ac,pl].forEach(el=>{el.style.left=offX+'px';el.style.top=offY+'px';});
 }
 
-function changePage(d){
+async function changePage(d){
   const np=curPage+d;if(np<1||np>totalPages)return;
   saveAnnotData();curPage=np;
+  if(!pdfDoc&&pdfBuf){
+    // Reload PDF doc if it was lost (e.g. after resume)
+    pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(pdfBuf)}).promise;
+  }
   if(pdfDoc)renderPDFPage(curPage);
 }
 function updatePgLbl(){
