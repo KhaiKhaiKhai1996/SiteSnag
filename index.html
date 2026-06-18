@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SiteSnag">
+<link rel="manifest" href="manifest.json">
+<title>SiteSnag — Field Inspection</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);--text:#f0f0f0;--text2:#8b8fa8;--text3:#454960;--accent:#4f8ef7;--accent2:#3a6fd4;--green:#22c55e;--yellow:#f59e0b;--orange:#f97316;--red:#ef4444;--radius:12px;--radius-sm:8px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:opacity .22s,transform .22s;}
+.screen.hidden{opacity:0;pointer-events:none;transform:translateY(14px);}
+.topbar{display:flex;align-items:center;gap:12px;padding:52px 18px 13px;background:var(--surface);border-bottom:.5px solid var(--border);flex-shrink:0;}
+.topbar-title{font-size:17px;font-weight:600;flex:1;}
+.btn-icon{width:36px;height:36px;border-radius:50%;background:var(--surface2);border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.btn-icon svg{width:18px;height:18px;stroke:var(--text);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+#homeScreen{justify-content:center;align-items:center;}
+.home-inner{width:100%;max-width:440px;padding:28px 22px;}
+.home-logo{font-size:30px;font-weight:700;letter-spacing:-.5px;margin-bottom:5px;}
+.home-logo span{color:var(--accent);}
+.home-tag{font-size:14px;color:var(--text2);margin-bottom:32px;}
+.upload-zone{border:1.5px dashed var(--border2);border-radius:var(--radius);padding:36px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:12px;}
+.upload-zone:active{background:var(--surface2);border-color:var(--accent);}
+.upload-icon{width:44px;height:44px;margin:0 auto 12px;opacity:.4;}
+.upload-icon svg{width:44px;height:44px;stroke:var(--text);fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;}
+.upload-label{font-size:16px;font-weight:500;margin-bottom:5px;}
+.upload-sub{font-size:13px;color:var(--text2);}
+.btn-sec{width:100%;padding:13px;background:transparent;color:var(--text2);border:.5px solid var(--border2);border-radius:var(--radius);font-size:15px;font-weight:500;cursor:pointer;margin-top:8px;}
+.btn-sec:active{background:var(--surface2);}
+#fileInput{display:none;}
+.proj-section{margin-top:26px;}
+.proj-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.proj-section-title{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;}
+.storage-label{font-size:11px;color:var(--text3);}
+.proj-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.proj-card:active{background:var(--surface2);}
+.proj-ico{width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.proj-ico svg{width:17px;height:17px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.proj-info{flex:1;min-width:0;}
+.proj-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.proj-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.proj-del{padding:6px 8px;background:transparent;border:none;color:var(--text3);font-size:18px;cursor:pointer;border-radius:6px;line-height:1;}
+.proj-del:active{color:var(--red);}
+.no-proj{font-size:13px;color:var(--text3);text-align:center;padding:14px 0;}
+.install-banner{background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.install-banner svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.install-txt{font-size:12px;color:var(--text2);line-height:1.5;flex:1;}
+.install-txt strong{color:var(--text);}
+.banner-close{font-size:20px;color:var(--text3);cursor:pointer;padding:2px 6px;}
+#planScreen{background:#141720;}
+.plan-topbar{display:flex;align-items:center;gap:10px;padding:52px 14px 11px;background:var(--surface);border-bottom:.5px solid var(--border);flex-shrink:0;position:relative;z-index:10;}
+.plan-title{font-size:15px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.page-nav{display:flex;align-items:center;gap:7px;}
+.page-btn{width:28px;height:28px;border-radius:6px;background:var(--surface2);border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.page-btn svg{width:13px;height:13px;stroke:var(--text);fill:none;stroke-width:2;stroke-linecap:round;}
+.page-lbl{font-size:12px;color:var(--text2);white-space:nowrap;}
+.canvas-wrap{flex:1;overflow:hidden;position:relative;touch-action:none;}
+#planCanvas{position:absolute;top:0;left:0;}
+.pin-layer{position:absolute;top:0;left:0;pointer-events:none;}
+.pin{position:absolute;transform:translate(-50%,-100%);pointer-events:all;cursor:pointer;display:flex;flex-direction:column;align-items:center;}
+.pin-bubble{width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.45);}
+.pin-num{transform:rotate(45deg);font-size:10px;font-weight:700;color:#fff;}
+.pin-tail{width:2px;height:6px;background:rgba(255,255,255,.25);}
+.pin.sev-nil .pin-bubble{background:var(--green);}
+.pin.sev-minor .pin-bubble{background:var(--yellow);}
+.pin.sev-moderate .pin-bubble{background:var(--orange);}
+.pin.sev-critical .pin-bubble{background:var(--red);}
+.pin.sev-none .pin-bubble{background:var(--accent);}
+.mode-badge{position:absolute;top:62px;left:50%;transform:translateX(-50%);background:rgba(20,23,32,.9);backdrop-filter:blur(8px);color:var(--text);font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;pointer-events:none;opacity:0;transition:opacity .25s;z-index:20;white-space:nowrap;border:.5px solid var(--border2);}
+.mode-badge.show{opacity:1;}
+.save-dot{position:absolute;top:60px;right:14px;font-size:11px;color:var(--green);z-index:20;opacity:0;transition:opacity .4s;font-weight:600;}
+.zoom-btns{position:absolute;right:12px;bottom:80px;display:flex;flex-direction:column;gap:6px;z-index:10;}
+.zoom-btn{width:36px;height:36px;border-radius:10px;background:var(--surface);border:.5px solid var(--border2);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.35);}
+.plan-toolbar{display:flex;align-items:center;padding:0 0 env(safe-area-inset-bottom);background:var(--surface);border-top:.5px solid var(--border);flex-shrink:0;}
+.tool-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 12px;cursor:pointer;border:none;background:transparent;color:var(--text2);font-size:10px;font-weight:500;}
+.tool-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.tool-btn.active{color:var(--accent);}
+.tool-btn.active svg{stroke:var(--accent);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .22s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 env(safe-area-inset-bottom);width:100%;max-height:90vh;overflow-y:auto;transform:translateY(40px);transition:transform .28s cubic-bezier(.32,.72,0,1);}
+.overlay.open .sheet{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;}
+.sheet-hdr{padding:15px 18px 12px;border-bottom:.5px solid var(--border);display:flex;align-items:center;gap:12px;}
+.sheet-title{font-size:17px;font-weight:600;flex:1;}
+.sheet-close{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:none;color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.sheet-body{padding:14px 18px;display:flex;flex-direction:column;gap:14px;}
+.form-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block;}
+.form-input{background:var(--surface2);border:.5px solid var(--border2);border-radius:var(--radius-sm);padding:11px 12px;font-size:15px;color:var(--text);width:100%;-webkit-appearance:none;}
+.form-input:focus{outline:none;border-color:var(--accent);}
+.chip-row{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{padding:7px 12px;border-radius:20px;border:.5px solid var(--border2);font-size:13px;font-weight:500;color:var(--text2);background:transparent;cursor:pointer;transition:all .12s;user-select:none;}
+.chip.sel{background:var(--accent);border-color:var(--accent);color:#fff;}
+.chip.sev-nil.sel{background:var(--green);border-color:var(--green);color:#fff;}
+.chip.sev-minor.sel{background:var(--yellow);border-color:var(--yellow);color:#000;}
+.chip.sev-moderate.sel{background:var(--orange);border-color:var(--orange);color:#fff;}
+.chip.sev-critical.sel{background:var(--red);border-color:var(--red);color:#fff;}
+.compass-grid{display:grid;grid-template-columns:repeat(3,auto);gap:5px;width:fit-content;}
+.compass-center{font-size:10px;color:var(--text3);display:flex;align-items:center;justify-content:center;padding:7px 10px;}
+.photo-area{background:var(--surface2);border-radius:var(--radius);padding:14px;display:flex;flex-direction:column;gap:9px;}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.photo-thumb{aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;position:relative;background:var(--bg);border:.5px solid var(--border2);}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.75);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1;}
+.btn-cam{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;background:var(--surface);border:1px dashed var(--border2);border-radius:var(--radius-sm);color:var(--text2);font-size:14px;font-weight:500;cursor:pointer;}
+.btn-cam svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+#camInput{display:none;}
+.photo-loading{font-size:12px;color:var(--text2);text-align:center;padding:8px;}
+.btn-save{width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-size:16px;font-weight:700;cursor:pointer;margin-top:2px;}
+.btn-save:active{background:var(--accent2);}
+.btn-del-pin{width:100%;padding:12px;background:transparent;color:var(--red);border:.5px solid rgba(239,68,68,.3);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;}
+.log-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:9px;}
+.log-card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--radius);padding:13px;display:flex;gap:11px;cursor:pointer;}
+.log-card:active{background:var(--surface2);}
+.sev-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.d-nil{background:var(--green);}.d-minor{background:var(--yellow);}.d-moderate{background:var(--orange);}.d-critical{background:var(--red);}.d-none{background:var(--accent);}
+.log-main{flex:1;min-width:0;}
+.log-zone{font-size:15px;font-weight:600;}
+.log-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.log-defect{font-size:13px;color:var(--text2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.log-photos{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;}
+.log-thumb{width:50px;height:50px;border-radius:6px;object-fit:cover;background:var(--surface2);border:.5px solid var(--border);}
+.sev-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;color:#fff;flex-shrink:0;height:fit-content;}
+.sev-badge.nil{background:var(--green);}.sev-badge.minor{background:var(--yellow);color:#000;}.sev-badge.moderate{background:var(--orange);}.sev-badge.critical{background:var(--red);}.sev-badge.none{background:var(--surface2);color:var(--text2);}
+.empty-log{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--text3);font-size:14px;padding:40px;text-align:center;}
+.report-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+.rstat{background:var(--surface2);border-radius:var(--radius-sm);padding:11px;text-align:center;}
+.rstat-n{font-size:22px;font-weight:700;}.rstat-l{font-size:11px;color:var(--text2);margin-top:2px;}
+.n-t{color:var(--accent);}.n-nil{color:var(--green);}.n-w{color:var(--yellow);}.n-c{color:var(--red);}
+.export-note{font-size:13px;color:var(--text2);background:var(--surface2);border-radius:var(--radius-sm);padding:12px;line-height:1.6;margin-bottom:14px;}
+.btn-export{width:100%;padding:14px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface);border:.5px solid var(--border2);border-radius:20px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--text);box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen" id="homeScreen">
+  <div style="flex:1;overflow-y:auto;display:flex;align-items:center;justify-content:center;padding:16px 0;">
+  <div class="home-inner">
+    <div class="home-logo">Site<span>Snag</span></div>
+    <div class="home-tag">Field inspection · pin · snap · report</div>
+    <div id="installBanner" class="install-banner" style="display:none;">
+      <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+      <div class="install-txt"><strong>Add to Home Screen</strong> — Safari → Share → Add to Home Screen for full app experience</div>
+      <div class="banner-close" onclick="this.parentElement.style.display='none'">×</div>
+    </div>
+    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+      <div class="upload-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+      <div class="upload-label">Load site plan</div>
+      <div class="upload-sub">PDF or image · tap to pick from Files</div>
+    </div>
+    <input type="file" id="fileInput" accept="application/pdf,image/*" onchange="handleFile(this)">
+    <button class="btn-sec" onclick="startBlank()">Start without a plan</button>
+    <div class="proj-section">
+      <div class="proj-header">
+        <div class="proj-section-title">Saved projects</div>
+        <div class="storage-label" id="storeLbl"></div>
+      </div>
+      <div id="projList"><div class="no-proj">No saved projects yet.</div></div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- PLAN -->
+<div class="screen hidden" id="planScreen">
+  <div class="plan-topbar">
+    <div class="btn-icon" onclick="goHome()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+    <div class="plan-title" id="planTitle">Site Plan</div>
+    <div class="page-nav" id="pageNav" style="display:none;">
+      <div class="page-btn" onclick="changePage(-1)"><svg viewBox="0 0 14 14"><polyline points="9 2 4 7 9 12"/></svg></div>
+      <div class="page-lbl" id="pageLbl">1/1</div>
+      <div class="page-btn" onclick="changePage(1)"><svg viewBox="0 0 14 14"><polyline points="5 2 10 7 5 12"/></svg></div>
+    </div>
+    <div class="btn-icon" onclick="showLog()"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+  </div>
+  <div class="mode-badge" id="modeBadge"></div>
+  <div class="save-dot" id="saveDot">Saved ✓</div>
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="planCanvas"></canvas>
+    <div class="pin-layer" id="pinLayer"></div>
+    <div class="zoom-btns">
+      <div class="zoom-btn" onclick="doZoom(1.25)">+</div>
+      <div class="zoom-btn" onclick="doZoom(0.8)">−</div>
+      <div class="zoom-btn" style="font-size:11px;font-weight:700;" onclick="fitPlan()">FIT</div>
+    </div>
+  </div>
+  <div class="plan-toolbar">
+    <div class="tool-btn" id="toolPin" onclick="setMode('pin')">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Pin
+    </div>
+    <div class="tool-btn active" id="toolPan" onclick="setMode('pan')">
+      <svg viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>Pan
+    </div>
+    <div class="tool-btn" id="toolDraw" onclick="setMode('draw')">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Draw
+    </div>
+    <div class="tool-btn" id="toolErase" onclick="setMode('erase')">
+      <svg viewBox="0 0 24 24"><path d="M20 20H7L3 16l10-10 7 7-2.5 2.5"/><path d="M6 10L4 12"/></svg>Erase
+    </div>
+    <div class="tool-btn" onclick="showReport()">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Report
+    </div>
+  </div>
+</div>
+
+<!-- LOG -->
+<div class="screen hidden" id="logScreen">
+  <div class="topbar">
+    <div class="btn-icon" onclick="showScreen('planScreen')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+    <div class="topbar-title">Inspection log</div>
+    <div class="btn-icon" onclick="showReport()"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+  </div>
+  <div class="log-list" id="logList"></div>
+</div>
+
+<!-- PIN SHEET -->
+<div class="overlay" id="pinOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hdr">
+      <div class="sheet-title" id="sheetTitle">New observation</div>
+      <button class="sheet-close" onclick="closeSheet()">×</button>
+    </div>
+    <div class="sheet-body">
+      <div><label class="form-label">Zone / element ID</label>
+        <input class="form-input" id="fZone" placeholder="e.g. B2, C1A, Slab-L3" type="text"></div>
+      <div><label class="form-label">Element type</label>
+        <div class="chip-row">
+          <div class="chip" data-g="elem" data-v="Slab">Slab</div>
+          <div class="chip" data-g="elem" data-v="Beam">Beam</div>
+          <div class="chip" data-g="elem" data-v="Column">Column</div>
+          <div class="chip" data-g="elem" data-v="Wall">Wall</div>
+          <div class="chip" data-g="elem" data-v="Staircase">Staircase</div>
+          <div class="chip" data-g="elem" data-v="Foundation">Foundation</div>
+          <div class="chip" data-g="elem" data-v="Façade">Façade</div>
+          <div class="chip" data-g="elem" data-v="Soffit">Soffit</div>
+          <div class="chip" data-g="elem" data-v="Joint">Joint</div>
+          <div class="chip" data-g="elem" data-v="Roof">Roof</div>
+        </div>
+      </div>
+      <div><label class="form-label">Shot direction</label>
+        <div class="compass-grid">
+          <div class="chip" data-g="dir" data-v="NW">↖NW</div>
+          <div class="chip" data-g="dir" data-v="N">↑N</div>
+          <div class="chip" data-g="dir" data-v="NE">↗NE</div>
+          <div class="chip" data-g="dir" data-v="W">←W</div>
+          <div class="compass-center">DIR</div>
+          <div class="chip" data-g="dir" data-v="E">→E</div>
+          <div class="chip" data-g="dir" data-v="SW">↙SW</div>
+          <div class="chip" data-g="dir" data-v="S">↓S</div>
+          <div class="chip" data-g="dir" data-v="SE">↘SE</div>
+        </div>
+        <div class="chip-row" style="margin-top:7px;">
+          <div class="chip" data-g="dir" data-v="Overview">Overview</div>
+          <div class="chip" data-g="dir" data-v="Close-up">Close-up</div>
+          <div class="chip" data-g="dir" data-v="Underside">Underside</div>
+          <div class="chip" data-g="dir" data-v="Looking up">Looking up</div>
+        </div>
+      </div>
+      <div><label class="form-label">Defect / observation</label>
+        <div class="chip-row">
+          <div class="chip" data-g="defect" data-v="Crack">Crack</div>
+          <div class="chip" data-g="defect" data-v="Spalling">Spalling</div>
+          <div class="chip" data-g="defect" data-v="Water stain">Water stain</div>
+          <div class="chip" data-g="defect" data-v="Seepage">Seepage</div>
+          <div class="chip" data-g="defect" data-v="Corrosion">Corrosion</div>
+          <div class="chip" data-g="defect" data-v="Deflection">Deflection</div>
+          <div class="chip" data-g="defect" data-v="Settlement">Settlement</div>
+          <div class="chip" data-g="defect" data-v="Delamination">Delamination</div>
+          <div class="chip" data-g="defect" data-v="Honeycombing">Honeycombing</div>
+          <div class="chip" data-g="defect" data-v="Nil defect">Nil defect</div>
+        </div>
+      </div>
+      <div><label class="form-label">Severity</label>
+        <div class="chip-row">
+          <div class="chip sev-nil" data-g="sev" data-v="nil">✓ Nil</div>
+          <div class="chip sev-minor" data-g="sev" data-v="minor">Minor</div>
+          <div class="chip sev-moderate" data-g="sev" data-v="moderate">Moderate</div>
+          <div class="chip sev-critical" data-g="sev" data-v="critical">⚠ Critical</div>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Photos <span id="photoCount" style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;"></span></label>
+        <div class="photo-area">
+          <div class="photo-grid" id="photoGrid"></div>
+          <div id="photoLoading" class="photo-loading" style="display:none;">Loading photos…</div>
+          <div class="btn-cam" onclick="document.getElementById('camInput').click()">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Take / choose photo
+          </div>
+          <input type="file" id="camInput" accept="image/*" capture="environment" multiple onchange="handlePhotos(this)">
+        </div>
+      </div>
+      <div><label class="form-label">Remarks</label>
+        <textarea class="form-input" id="fRemarks" rows="3" placeholder="e.g. Crack width ~0.3mm, hairline, horizontal…" style="height:76px;resize:none;"></textarea>
+      </div>
+      <button class="btn-save" onclick="savePin()">Save observation</button>
+      <button class="btn-del-pin" id="delPinBtn" onclick="deletePin()" style="display:none;">Delete this pin</button>
+      <div style="height:18px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- REPORT SHEET -->
+<div class="overlay" id="reportOverlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hdr">
+      <div class="sheet-title">Inspection summary</div>
+      <button class="sheet-close" onclick="closeOverlay('reportOverlay')">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="report-stats">
+        <div class="rstat"><div class="rstat-n n-t" id="rT">0</div><div class="rstat-l">Total</div></div>
+        <div class="rstat"><div class="rstat-n n-nil" id="rN">0</div><div class="rstat-l">Nil</div></div>
+        <div class="rstat"><div class="rstat-n n-w" id="rW">0</div><div class="rstat-l">Minor/Mod</div></div>
+        <div class="rstat"><div class="rstat-n n-c" id="rC">0</div><div class="rstat-l">Critical</div></div>
+      </div>
+      <div class="export-note">Export = self-contained HTML with all photos embedded.<br>Safari → Share → Print → Save as PDF.</div>
+      <button class="btn-export" onclick="exportReport()">⬇ Export inspection report</button>
+      <button class="btn-sec" style="margin-top:0;" onclick="confirmNewProject()">New project / clear</button>
+      <div style="height:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── IndexedDB ──────────────────────────────────────────────
+const DB_NAME='sitesnag_v2', DB_VER=1;
+let db;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;['projects','photos','plans'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});});};r.onsuccess=e=>{db=e.target.result;res(db);};r.onerror=rej;});}
+function dbPut(s,o){return new Promise((r,j)=>{const t=db.transaction(s,'readwrite');t.objectStore(s).put(o).onsuccess=e=>r(e.target.result);t.onerror=j;});}
+function dbGet(s,k){return new Promise((r,j)=>{const t=db.transaction(s,'readonly');t.objectStore(s).get(k).onsuccess=e=>r(e.target.result);t.onerror=j;});}
+function dbDel(s,k){return new Promise((r,j)=>{const t=db.transaction(s,'readwrite');t.objectStore(s).delete(k).onsuccess=()=>r();t.onerror=j;});}
+function dbAll(s){return new Promise((r,j)=>{const t=db.transaction(s,'readonly');t.objectStore(s).getAll().onsuccess=e=>r(e.target.result);t.onerror=j;});}
+
+// ── STATE ──────────────────────────────────────────────────
+let pdfDoc=null,curPage=1,totalPages=1;
+let offsetX=0,offsetY=0,mode='pan';
+let pins=[],editPinId=null,pinDropX=0,pinDropY=0;
+let curPhotos=[],selElems=new Set(),selDirs=new Set(),selDefects=new Set(),selSev='';
+let isDrawing=false,isPanning=false,panStart=null,panOff=null;
+let longTimer=null,didMove=false,downCoords=null,rippleEl=null;
+let annotations={},projId=null,projName='Site Plan',saveTimer=null;
+const LONG_MS=380,MOVE_PX=8;
+
+// ── TOAST ──────────────────────────────────────────────────
+function toast(msg,dur=2200){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+
+// ── SCREENS ────────────────────────────────────────────────
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id));}
+function goHome(){saveAnnotations();showScreen('homeScreen');renderProjList();}
+function showLog(){renderLog();showScreen('logScreen');}
+function closeOverlay(id){document.getElementById(id).classList.remove('open');}
+
+// ── INSTALL BANNER ─────────────────────────────────────────
+function checkInstall(){if(/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.navigator.standalone)document.getElementById('installBanner').style.display='flex';}
+
+// ── PROJECT LIST ───────────────────────────────────────────
+async function renderProjList(){
+  const list=document.getElementById('projList');
+  const ps=await dbAll('projects'); ps.sort((a,b)=>b.savedAt-a.savedAt);
+  document.getElementById('storeLbl').textContent=ps.length+' project'+(ps.length!==1?'s':'');
+  if(!ps.length){list.innerHTML='<div class="no-proj">No saved projects yet.</div>';return;}
+  list.innerHTML=ps.map(p=>{
+    const d=new Date(p.savedAt).toLocaleDateString('en-SG',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    return `<div class="proj-card" onclick="resumeProj('${p.id}')">
+      <div class="proj-ico"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><circle cx="12" cy="14" r="3"/></svg></div>
+      <div class="proj-info"><div class="proj-name">${p.name}</div><div class="proj-meta">${p.pinCount||0} obs · ${d}</div></div>
+      <button class="proj-del" onclick="deleteProj('${p.id}',event)">×</button></div>`;
+  }).join('')+`<button class="btn-sec" style="margin-top:4px;" onclick="document.getElementById('fileInput').click()">+ New project from plan</button>`;
+}
+
+async function deleteProj(id,e){
+  e.stopPropagation();
+  if(!confirm('Delete this project and all photos?'))return;
+  const p=await dbGet('projects',id);
+  if(p&&p.pins)for(const pin of p.pins)for(const pid of(pin.photoIds||[]))await dbDel('photos',pid);
+  await dbDel('projects',id);await dbDel('plans',id);
+  renderProjList();toast('Project deleted');
+}
+
+async function resumeProj(id){
+  const p=await dbGet('projects',id);if(!p){toast('Could not load');return;}
+  projId=p.id;projName=p.name;pins=p.pins||[];annotations=p.annotations||{};
+  curPage=p.curPage||1;totalPages=p.totalPages||1;
+  document.getElementById('planTitle').textContent=projName;
+  showScreen('planScreen');
+  const plan=await dbGet('plans',id);
+  if(plan&&plan.dataUrl)loadImageUrl(plan.dataUrl);
+  else startBlankCanvas();
+  if(totalPages>1)document.getElementById('pageNav').style.display='flex';
+  updatePageLbl();toast('Resumed: '+projName);
+}
+
+// ── FILE HANDLING ──────────────────────────────────────────
+function handleFile(inp){
+  const f=inp.files[0];if(!f)return;
+  projName=f.name.replace(/\.[^.]+$/,'');projId='proj_'+Date.now();pins=[];annotations={};curPage=1;
+  document.getElementById('planTitle').textContent=projName;
+  if(f.type==='application/pdf'){const fr=new FileReader();fr.onload=e=>loadPDF(e.target.result);fr.readAsArrayBuffer(f);}
+  else{const fr=new FileReader();fr.onload=e=>{loadImageUrl(e.target.result);dbPut('plans',{id:projId,dataUrl:e.target.result});};fr.readAsDataURL(f);}
+  inp.value='';
+}
+
+function startBlank(){projName='Blank';projId='proj_'+Date.now();pins=[];annotations={};document.getElementById('planTitle').textContent=projName;showScreen('planScreen');startBlankCanvas();}
+
+function startBlankCanvas(){
+  const canvas=document.getElementById('planCanvas'),wrap=document.getElementById('canvasWrap'),dpr=window.devicePixelRatio||1;
+  canvas.width=wrap.clientWidth*dpr;canvas.height=wrap.clientHeight*dpr;
+  canvas.style.width=wrap.clientWidth+'px';canvas.style.height=wrap.clientHeight+'px';
+  offsetX=0;offsetY=0;posCanvas();
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#141720';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=0.5;
+  for(let x=0;x<canvas.width;x+=40*dpr){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}
+  for(let y=0;y<canvas.height;y+=40*dpr){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}
+  setMode('pan');renderPins();
+}
+
+async function loadPDF(buf){
+  showScreen('planScreen');
+  pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
+  totalPages=pdfDoc.numPages;curPage=1;
+  document.getElementById('pageNav').style.display=totalPages>1?'flex':'none';
+  await renderPDFPage(curPage);setMode('pan');
+}
+
+async function renderPDFPage(n){
+  const page=await pdfDoc.getPage(n);
+  const wrap=document.getElementById('canvasWrap'),canvas=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
+  const vw=wrap.clientWidth,vh=wrap.clientHeight;
+  const vp0=page.getViewport({scale:1});const fit=Math.min(vw/vp0.width,vh/vp0.height);
+  const vp=page.getViewport({scale:fit*dpr});
+  canvas.width=vp.width;canvas.height=vp.height;
+  canvas.style.width=(vp.width/dpr)+'px';canvas.style.height=(vp.height/dpr)+'px';
+  offsetX=(vw-vp.width/dpr)/2;offsetY=(vh-vp.height/dpr)/2;posCanvas();
+  const ctx=canvas.getContext('2d');
+  await page.render({canvasContext:ctx,viewport:vp}).promise;
+  if(n===1)dbPut('plans',{id:projId,dataUrl:canvas.toDataURL('image/jpeg',0.6)});
+  if(annotations[n]){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height);img.src=annotations[n];}
+  updatePageLbl();renderPins();
+}
+
+function loadImageUrl(dataUrl){
+  showScreen('planScreen');
+  const wrap=document.getElementById('canvasWrap'),canvas=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
+  const img=new Image();
+  img.onload=()=>{
+    const vw=wrap.clientWidth,vh=wrap.clientHeight,fit=Math.min(vw/img.width,vh/img.height);
+    canvas.width=img.width*fit*dpr;canvas.height=img.height*fit*dpr;
+    canvas.style.width=(img.width*fit)+'px';canvas.style.height=(img.height*fit)+'px';
+    offsetX=(vw-img.width*fit)/2;offsetY=(vh-img.height*fit)/2;posCanvas();
+    canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+    setMode('pan');renderPins();
+  };img.src=dataUrl;
+}
+
+function posCanvas(){const c=document.getElementById('planCanvas');c.style.left=offsetX+'px';c.style.top=offsetY+'px';document.getElementById('pinLayer').style.left=offsetX+'px';document.getElementById('pinLayer').style.top=offsetY+'px';}
+function saveAnnotations(){const c=document.getElementById('planCanvas');if(c.width>0)annotations[curPage]=c.toDataURL('image/jpeg',0.8);}
+function changePage(d){const np=curPage+d;if(np<1||np>totalPages)return;saveAnnotations();curPage=np;renderPDFPage(curPage);}
+function updatePageLbl(){document.getElementById('pageLbl').textContent=curPage+'/'+totalPages;document.getElementById('pageNav').style.display=totalPages>1?'flex':'none';}
+
+// ── MODE ───────────────────────────────────────────────────
+function setMode(m){
+  mode=m;
+  ['toolPin','toolPan','toolDraw','toolErase'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  const map={pin:'toolPin',pan:'toolPan',draw:'toolDraw',erase:'toolErase'};
+  if(map[m])document.getElementById(map[m]).classList.add('active');
+  const msgs={pin:'Hold finger to drop a pin',pan:'Drag to pan / navigate',draw:'Draw on plan',erase:'Erase drawings'};
+  const b=document.getElementById('modeBadge');b.textContent=msgs[m]||'';b.classList.add('show');setTimeout(()=>b.classList.remove('show'),2400);
+}
+
+// ── CANVAS EVENTS ──────────────────────────────────────────
+function cc(e){const c=document.getElementById('planCanvas'),r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;return{cx:(e.clientX-r.left)*dpr,cy:(e.clientY-r.top)*dpr,lx:e.clientX-offsetX,ly:e.clientY-offsetY,ex:e.clientX,ey:e.clientY};}
+function mkRipple(x,y){rmRipple();rippleEl=document.createElement('div');Object.assign(rippleEl.style,{position:'fixed',left:x+'px',top:y+'px',width:'0',height:'0',borderRadius:'50%',background:'rgba(79,142,247,0.18)',border:'2px solid #4f8ef7',transform:'translate(-50%,-50%)',pointerEvents:'none',zIndex:'200',transition:`width ${LONG_MS}ms ease,height ${LONG_MS}ms ease`});document.body.appendChild(rippleEl);requestAnimationFrame(()=>{rippleEl.style.width='58px';rippleEl.style.height='58px';});}
+function rmRipple(){if(rippleEl){rippleEl.remove();rippleEl=null;}}
+function cancelLong(){clearTimeout(longTimer);longTimer=null;rmRipple();}
+
+const cw=document.getElementById('canvasWrap');
+cw.addEventListener('pointerdown',e=>{e.preventDefault();const c=cc(e);didMove=false;downCoords=c;
+  if(mode==='pin'){mkRipple(c.ex,c.ey);longTimer=setTimeout(()=>{if(!didMove){rmRipple();if(navigator.vibrate)navigator.vibrate(25);pinDropX=c.lx;pinDropY=c.ly;openPinSheet(null);}longTimer=null;},LONG_MS);}
+  else if(mode==='pan'){isPanning=true;panStart={x:e.clientX,y:e.clientY};panOff={x:offsetX,y:offsetY};}
+  else if(mode==='draw'){isDrawing=true;const ctx=document.getElementById('planCanvas').getContext('2d');ctx.strokeStyle='#4f8ef7';ctx.lineWidth=3*(window.devicePixelRatio||1);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(c.cx,c.cy);}
+  else if(mode==='erase'){isDrawing=true;const ctx=document.getElementById('planCanvas').getContext('2d');ctx.strokeStyle='#141720';ctx.lineWidth=30*(window.devicePixelRatio||1);ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(c.cx,c.cy);}
+},{passive:false});
+
+cw.addEventListener('pointermove',e=>{e.preventDefault();const c=cc(e);
+  if(longTimer&&downCoords){const dx=e.clientX-downCoords.ex,dy=e.clientY-downCoords.ey;if(Math.sqrt(dx*dx+dy*dy)>MOVE_PX){didMove=true;cancelLong();}}
+  if(mode==='pan'&&isPanning){offsetX=panOff.x+(e.clientX-panStart.x);offsetY=panOff.y+(e.clientY-panStart.y);posCanvas();}
+  else if((mode==='draw'||mode==='erase')&&isDrawing){const ctx=document.getElementById('planCanvas').getContext('2d');ctx.lineTo(c.cx,c.cy);ctx.stroke();}
+},{passive:false});
+
+cw.addEventListener('pointerup',()=>{cancelLong();if(mode==='pan')isPanning=false;if(mode==='draw'||mode==='erase'){isDrawing=false;saveAnnotations();triggerSave();}});
+cw.addEventListener('pointercancel',()=>{cancelLong();isPanning=false;isDrawing=false;});
+
+function doZoom(f){const c=document.getElementById('planCanvas');c.style.width=(parseFloat(c.style.width)*f)+'px';c.style.height=(parseFloat(c.style.height)*f)+'px';renderPins();}
+function fitPlan(){if(pdfDoc)renderPDFPage(curPage);}
+
+// ── CHIPS ──────────────────────────────────────────────────
+document.querySelectorAll('.chip[data-g]').forEach(c=>c.addEventListener('click',()=>{
+  const g=c.dataset.g,v=c.dataset.v;
+  if(g==='elem'){selElems.has(v)?selElems.delete(v):selElems.add(v);c.classList.toggle('sel');}
+  if(g==='dir'){selDirs.has(v)?selDirs.delete(v):selDirs.add(v);c.classList.toggle('sel');}
+  if(g==='defect'){selDefects.has(v)?selDefects.delete(v):selDefects.add(v);c.classList.toggle('sel');}
+  if(g==='sev'){selSev=selSev===v?'':v;document.querySelectorAll('.chip[data-g="sev"]').forEach(x=>x.classList.toggle('sel',x.dataset.v===selSev));}
+}));
+function syncChips(){
+  document.querySelectorAll('.chip[data-g="elem"]').forEach(c=>c.classList.toggle('sel',selElems.has(c.dataset.v)));
+  document.querySelectorAll('.chip[data-g="dir"]').forEach(c=>c.classList.toggle('sel',selDirs.has(c.dataset.v)));
+  document.querySelectorAll('.chip[data-g="defect"]').forEach(c=>c.classList.toggle('sel',selDefects.has(c.dataset.v)));
+  document.querySelectorAll('.chip[data-g="sev"]').forEach(c=>c.classList.toggle('sel',c.dataset.v===selSev));
+}
+
+// ── PHOTOS ─────────────────────────────────────────────────
+async function handlePhotos(inp){
+  const files=Array.from(inp.files);if(!files.length)return;
+  document.getElementById('photoLoading').style.display='block';
+  for(const f of files){
+    const id='ph_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+    await dbPut('photos',{id,blob:f,projId});
+    curPhotos.push({id,url:URL.createObjectURL(f)});
+  }
+  document.getElementById('photoLoading').style.display='none';
+  renderPhotoGrid();updatePhotoCount();inp.value='';
+}
+
+async function loadPhotosForPin(ids){
+  curPhotos=[];document.getElementById('photoLoading').style.display='block';
+  for(const id of(ids||[])){const r=await dbGet('photos',id);if(r)curPhotos.push({id,url:URL.createObjectURL(r.blob)});}
+  document.getElementById('photoLoading').style.display='none';
+  renderPhotoGrid();updatePhotoCount();
+}
+
+function renderPhotoGrid(){
+  const g=document.getElementById('photoGrid');g.innerHTML='';
+  curPhotos.forEach((p,i)=>{
+    const d=document.createElement('div');d.className='photo-thumb';
+    const img=document.createElement('img');img.src=p.url;
+    const del=document.createElement('div');del.className='photo-del';del.textContent='×';
+    del.addEventListener('click',ev=>{ev.stopPropagation();removePhoto(i);});
+    d.appendChild(img);d.appendChild(del);g.appendChild(d);
+  });
+}
+
+function removePhoto(i){URL.revokeObjectURL(curPhotos[i].url);dbDel('photos',curPhotos.splice(i,1)[0].id);renderPhotoGrid();updatePhotoCount();}
+function updatePhotoCount(){const n=curPhotos.length;document.getElementById('photoCount').textContent=n?`(${n} photo${n>1?'s':''})`:'';}
+
+// ── PIN SHEET ──────────────────────────────────────────────
+async function openPinSheet(id){
+  editPinId=id;selElems=new Set();selDirs=new Set();selDefects=new Set();selSev='';curPhotos=[];
+  document.getElementById('fZone').value='';document.getElementById('fRemarks').value='';
+  document.getElementById('sheetTitle').textContent=id?'Edit observation':'New observation';
+  document.getElementById('delPinBtn').style.display=id?'block':'none';
+  renderPhotoGrid();updatePhotoCount();
+  if(id){const pin=pins.find(p=>p.id===id);if(pin){document.getElementById('fZone').value=pin.zone||'';document.getElementById('fRemarks').value=pin.remarks||'';selElems=new Set(pin.elems||[]);selDirs=new Set(pin.dirs||[]);selDefects=new Set(pin.defects||[]);selSev=pin.sev||'';await loadPhotosForPin(pin.photoIds||[]);}}
+  syncChips();document.getElementById('pinOverlay').classList.add('open');
+}
+
+function closeSheet(){document.getElementById('pinOverlay').classList.remove('open');curPhotos.forEach(p=>URL.revokeObjectURL(p.url));curPhotos=[];}
+
+async function savePin(){
+  const zone=document.getElementById('fZone').value.trim()||`#${pins.length+1}`;
+  const remarks=document.getElementById('fRemarks').value.trim();
+  const photoIds=curPhotos.map(p=>p.id);
+  if(editPinId){const pin=pins.find(p=>p.id===editPinId);if(pin)Object.assign(pin,{zone,sev:selSev,elems:[...selElems],dirs:[...selDirs],defects:[...selDefects],photoIds,remarks,page:curPage});}
+  else pins.push({id:Date.now(),x:pinDropX,y:pinDropY,zone,sev:selSev,elems:[...selElems],dirs:[...selDirs],defects:[...selDefects],photoIds,remarks,page:curPage,time:new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})});
+  closeSheet();renderPins();await triggerSave();toast('Saved ✓');
+}
+
+async function deletePin(){
+  if(!editPinId||!confirm('Delete this pin?'))return;
+  const pin=pins.find(p=>p.id===editPinId);
+  if(pin)for(const pid of(pin.photoIds||[]))await dbDel('photos',pid);
+  pins=pins.filter(p=>p.id!==editPinId);
+  closeSheet();renderPins();await triggerSave();toast('Pin deleted');
+}
+
+// ── RENDER PINS ────────────────────────────────────────────
+function renderPins(){
+  const layer=document.getElementById('pinLayer'),canvas=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
+  const sx=parseFloat(canvas.style.width)/(canvas.width/dpr)||1;
+  const sy=parseFloat(canvas.style.height)/(canvas.height/dpr)||1;
+  const pg=pins.filter(p=>(p.page||1)===curPage);
+  layer.style.width=canvas.style.width;layer.style.height=canvas.style.height;
+  layer.innerHTML=pg.map((p,i)=>`<div class="pin sev-${p.sev||'none'}" style="left:${p.x*sx}px;top:${p.y*sy}px;" onclick="openPinSheet(${p.id})"><div class="pin-bubble"><span class="pin-num">${i+1}</span></div><div class="pin-tail"></div></div>`).join('');
+}
+
+// ── SAVE ───────────────────────────────────────────────────
+async function triggerSave(){
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    saveAnnotations();
+    await dbPut('projects',{id:projId,name:projName,pins,annotations,curPage,totalPages,pinCount:pins.length,savedAt:Date.now()});
+    const dot=document.getElementById('saveDot');dot.style.opacity='1';setTimeout(()=>dot.style.opacity='0',1800);
+  },600);
+}
+
+// ── LOG ────────────────────────────────────────────────────
+async function renderLog(){
+  const list=document.getElementById('logList');
+  if(!pins.length){list.innerHTML='<div class="empty-log"><div>No observations yet.</div><div style="font-size:13px;">Switch to Pin mode → hold to drop.</div></div>';return;}
+  list.innerHTML=pins.map((p,i)=>{
+    const sc=p.sev||'none',sl=(p.sev||'—').toUpperCase();
+    return `<div class="log-card" onclick="goToPin(${p.id})">
+      <div class="sev-dot d-${sc}"></div>
+      <div class="log-main">
+        <div class="log-zone">${p.zone||'#'+(i+1)}</div>
+        <div class="log-meta">${p.elems?.join(', ')||''} · ${p.time||''} · Pg ${p.page||1}</div>
+        <div class="log-defect">${p.defects?.join(', ')||'No defect noted'}</div>
+        ${p.dirs?.length?`<div class="log-meta" style="margin-top:2px;">Dir: ${p.dirs.join(', ')}</div>`:''}
+        ${p.remarks?`<div class="log-defect" style="margin-top:3px;font-style:italic;">"${p.remarks}"</div>`:''}
+        ${(p.photoIds||[]).length?`<div class="log-photos" id="lp_${p.id}"></div>`:''}
+      </div>
+      <div class="sev-badge ${sc}">${sl}</div></div>`;
+  }).join('');
+  for(const p of pins){
+    const el=document.getElementById('lp_'+p.id);if(!el)continue;
+    for(const pid of(p.photoIds||[]).slice(0,3)){const r=await dbGet('photos',pid);if(r){const img=document.createElement('img');img.className='log-thumb';img.src=URL.createObjectURL(r.blob);el.appendChild(img);}}
+  }
+}
+
+function goToPin(id){const pin=pins.find(p=>p.id===id);if(pin&&pin.page!==curPage){saveAnnotations();curPage=pin.page;renderPDFPage(curPage);}showScreen('planScreen');}
+
+// ── REPORT ─────────────────────────────────────────────────
+function showReport(){document.getElementById('rT').textContent=pins.length;document.getElementById('rN').textContent=pins.filter(p=>p.sev==='nil').length;document.getElementById('rW').textContent=pins.filter(p=>p.sev==='minor'||p.sev==='moderate').length;document.getElementById('rC').textContent=pins.filter(p=>p.sev==='critical').length;document.getElementById('reportOverlay').classList.add('open');}
+
+async function exportReport(){
+  toast('Building report…',4000);
+  const date=new Date().toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'});
+  const sc={nil:'#22c55e',minor:'#f59e0b',moderate:'#f97316',critical:'#ef4444','':'#4f8ef7'};
+  const sl={nil:'NIL',minor:'MINOR',moderate:'MODERATE',critical:'CRITICAL','':'—'};
+  let rows='';
+  for(const[i,p]of pins.entries()){
+    let ph='';
+    for(const pid of(p.photoIds||[])){const r=await dbGet('photos',pid);if(r){const b64=await new Promise(res=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.readAsDataURL(r.blob);});ph+=`<img src="${b64}" style="width:70px;height:70px;object-fit:cover;border-radius:5px;margin:2px;">`; }}
+    rows+=`<tr><td>${i+1}</td><td><strong>${p.zone||'#'+(i+1)}</strong></td><td>${p.elems?.join(', ')||''}</td><td>${p.dirs?.join(', ')||''}</td><td>${p.defects?.join(', ')||''}</td><td><span style="background:${sc[p.sev||'']};color:${p.sev==='minor'?'#000':'#fff'};padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;">${sl[p.sev||'']}</span></td><td>Pg ${p.page||1}</td><td style="font-size:12px;color:#555;">${p.remarks||''}</td><td>${ph}</td></tr>`;
+  }
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Inspection Report — ${projName} — ${date}</title><style>body{font-family:-apple-system,Arial,sans-serif;margin:0;padding:28px;color:#111;}h1{font-size:22px;margin-bottom:4px;}.sub{font-size:13px;color:#666;margin-bottom:24px;}.stats{display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap;}.stat{background:#f5f5f5;border-radius:10px;padding:12px 18px;}.stat-n{font-size:22px;font-weight:700;}.stat-l{font-size:11px;color:#888;margin-top:2px;}table{width:100%;border-collapse:collapse;font-size:13px;}th{text-align:left;padding:8px 9px;background:#f0f0f0;border-bottom:1px solid #ddd;font-size:12px;}td{padding:9px;border-bottom:.5px solid #eee;vertical-align:top;}tr:nth-child(even){background:#fafafa;}@media print{body{padding:14px;}}</style></head><body><h1>Visual Inspection Report — ${projName}</h1><div class="sub">Date: ${date} &nbsp;·&nbsp; Generated by SiteSnag</div><div class="stats"><div class="stat"><div class="stat-n">${pins.length}</div><div class="stat-l">Total</div></div><div class="stat"><div class="stat-n" style="color:#22c55e">${pins.filter(p=>p.sev==='nil').length}</div><div class="stat-l">Nil</div></div><div class="stat"><div class="stat-n" style="color:#f59e0b">${pins.filter(p=>p.sev==='minor'||p.sev==='moderate').length}</div><div class="stat-l">Minor/Mod</div></div><div class="stat"><div class="stat-n" style="color:#ef4444">${pins.filter(p=>p.sev==='critical').length}</div><div class="stat-l">Critical</div></div></div><table><thead><tr><th>#</th><th>Zone</th><th>Element</th><th>Direction</th><th>Defect</th><th>Severity</th><th>Page</th><th>Remarks</th><th>Photos</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
+  const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`inspection_${projName.replace(/\s+/g,'_')}.html`;a.click();URL.revokeObjectURL(url);
+  toast('Report exported ✓');
+}
+
+function confirmNewProject(){closeOverlay('reportOverlay');if(pins.length>0&&!confirm('Start fresh? Current project stays saved.'))return;projId=null;pins=[];annotations={};showScreen('homeScreen');renderProjList();}
+
+// ── INIT ───────────────────────────────────────────────────
+openDB().then(()=>{renderProjList();checkInstall();});
+</script>
+</body>
+</html>
