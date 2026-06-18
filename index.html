@@ -35,18 +35,23 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .proj-meta{font-size:12px;color:var(--tx2);margin-top:2px;}
 .proj-del{padding:6px 10px;background:transparent;border:none;color:var(--tx3);font-size:20px;cursor:pointer;}
 .no-proj{font-size:13px;color:var(--tx3);text-align:center;padding:16px 0;}
+/* PLAN SCREEN */
 #planScreen{background:#141720;}
 .plan-bar{display:flex;align-items:center;gap:10px;padding:52px 14px 11px;background:var(--s);border-bottom:.5px solid var(--bd);flex-shrink:0;}
 .plan-title{font-size:15px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--s2);border:.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:17px;}
+.icon-btn{width:36px;height:36px;border-radius:50%;background:var(--s2);border:.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:17px;user-select:none;}
 .page-nav{display:flex;align-items:center;gap:6px;}
-.pg-btn{width:28px;height:28px;border-radius:6px;background:var(--s2);border:.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;}
+.pg-btn{width:32px;height:32px;border-radius:6px;background:var(--s2);border:.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;user-select:none;}
 .pg-lbl{font-size:12px;color:var(--tx2);}
+.status-bar{display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:var(--s);border-bottom:.5px solid var(--bd);flex-shrink:0;}
+.status-mode{font-size:12px;font-weight:600;color:var(--ac);}
+.status-save{font-size:11px;color:var(--gr);opacity:0;transition:opacity .3s;}
+.status-save.show{opacity:1;}
+/* CANVAS WRAP — annotCanvas pointer-events controlled by JS */
 .canvas-wrap{flex:1;overflow:hidden;position:relative;}
-/* TWO CANVASES — plan underneath, annotation on top */
 #planCanvas{position:absolute;top:0;left:0;}
-#annotCanvas{position:absolute;top:0;left:0;touch-action:none;background:transparent;}
-.pin-layer{position:absolute;top:0;left:0;pointer-events:none;}
+#annotCanvas{position:absolute;top:0;left:0;background:transparent;pointer-events:none;}
+.pin-layer{position:absolute;top:0;left:0;pointer-events:none;z-index:5;}
 .pin{position:absolute;transform:translate(-50%,-100%);pointer-events:all;cursor:pointer;display:flex;flex-direction:column;align-items:center;user-select:none;}
 .pin-head{width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.5);}
 .pin-num{transform:rotate(45deg);font-size:11px;font-weight:700;color:#fff;}
@@ -56,16 +61,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .pin.moderate .pin-head{background:var(--or);}
 .pin.critical .pin-head{background:var(--rd);}
 .pin.none .pin-head{background:var(--ac);}
-.status-bar{display:flex;align-items:center;justify-content:space-between;padding:6px 14px;background:var(--s);border-bottom:.5px solid var(--bd);flex-shrink:0;}
-.status-mode{font-size:12px;font-weight:600;color:var(--ac);}
-.status-save{font-size:11px;color:var(--gr);opacity:0;transition:opacity .3s;}
-.status-save.show{opacity:1;}
-.zoom-wrap{position:absolute;right:12px;bottom:76px;display:flex;flex-direction:column;gap:6px;z-index:10;}
-.z-btn{width:38px;height:38px;border-radius:10px;background:var(--s);border:.5px solid var(--bd2);color:var(--tx);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);}
-.toolbar{display:flex;align-items:center;padding:0 0 env(safe-area-inset-bottom);background:var(--s);border-top:.5px solid var(--bd);flex-shrink:0;}
-.tb-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 12px;cursor:pointer;border:none;background:transparent;color:var(--tx2);font-size:10px;font-weight:500;}
-.tb-icon{font-size:20px;}
+.zoom-wrap{position:absolute;right:12px;bottom:10px;display:flex;flex-direction:column;gap:6px;z-index:10;}
+.z-btn{width:40px;height:40px;border-radius:10px;background:var(--s);border:.5px solid var(--bd2);color:var(--tx);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.4);user-select:none;}
+/* TOOLBAR — bigger tap targets */
+.toolbar{display:flex;align-items:center;padding:4px 0 env(safe-area-inset-bottom);background:var(--s);border-top:.5px solid var(--bd);flex-shrink:0;}
+.tb-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 12px;cursor:pointer;border:none;background:transparent;color:var(--tx2);font-size:10px;font-weight:500;user-select:none;-webkit-user-select:none;min-height:56px;justify-content:center;}
+.tb-icon{font-size:22px;line-height:1;}
 .tb-btn.active{color:var(--ac);}
+/* OVERLAY */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s;}
 .overlay.open{opacity:1;pointer-events:all;}
 .sheet{background:var(--s);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .25s cubic-bezier(.32,.72,0,1);padding-bottom:env(safe-area-inset-bottom);}
@@ -73,13 +76,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .handle{width:36px;height:4px;background:var(--bd2);border-radius:2px;margin:12px auto 0;}
 .sheet-hdr{display:flex;align-items:center;padding:14px 18px 12px;border-bottom:.5px solid var(--bd);}
 .sheet-title{font-size:17px;font-weight:600;flex:1;}
-.sheet-close{width:28px;height:28px;border-radius:50%;background:var(--s2);border:none;color:var(--tx2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.sheet-close{width:32px;height:32px;border-radius:50%;background:var(--s2);border:none;color:var(--tx2);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
 .sheet-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
 .flabel{font-size:11px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block;}
 .finput{background:var(--s2);border:.5px solid var(--bd2);border-radius:var(--rs);padding:11px 12px;font-size:15px;color:var(--tx);width:100%;-webkit-appearance:none;}
 .finput:focus{outline:none;border-color:var(--ac);}
 .chips{display:flex;flex-wrap:wrap;gap:6px;}
-.chip{padding:7px 13px;border-radius:20px;border:.5px solid var(--bd2);font-size:13px;font-weight:500;color:var(--tx2);background:transparent;cursor:pointer;user-select:none;}
+.chip{padding:8px 13px;border-radius:20px;border:.5px solid var(--bd2);font-size:13px;font-weight:500;color:var(--tx2);background:transparent;cursor:pointer;user-select:none;min-height:36px;display:flex;align-items:center;}
 .chip.on{background:var(--ac);border-color:var(--ac);color:#fff;}
 .chip.sev-nil.on{background:var(--gr);border-color:var(--gr);}
 .chip.sev-minor.on{background:var(--yw);border-color:var(--yw);color:#000;}
@@ -91,13 +94,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
 .p-thumb{aspect-ratio:1;border-radius:var(--rs);overflow:hidden;position:relative;background:var(--bg);}
 .p-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-.p-del{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.75);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.cam-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--s);border:1px dashed var(--bd2);border-radius:var(--rs);color:var(--tx2);font-size:14px;font-weight:500;cursor:pointer;}
+.p-del{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.8);color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.cam-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--s);border:1px dashed var(--bd2);border-radius:var(--rs);color:var(--tx2);font-size:14px;font-weight:500;cursor:pointer;min-height:48px;}
 #camInput{display:none;}
 .p-loading{font-size:12px;color:var(--tx2);text-align:center;padding:6px;}
-.btn-save{width:100%;padding:15px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:700;cursor:pointer;}
+.btn-save{width:100%;padding:16px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-size:16px;font-weight:700;cursor:pointer;}
 .btn-save:active{background:var(--ac2);}
-.btn-del-pin{width:100%;padding:12px;background:transparent;color:var(--rd);border:.5px solid rgba(239,68,68,.35);border-radius:var(--r);font-size:14px;font-weight:500;cursor:pointer;margin-top:6px;}
+.btn-del-pin{width:100%;padding:16px;background:rgba(239,68,68,0.12);color:var(--rd);border:1.5px solid rgba(239,68,68,.5);border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;letter-spacing:.01em;}
+/* LOG */
 .log-list{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:8px;}
 .log-card{background:var(--s);border:.5px solid var(--bd);border-radius:var(--r);padding:13px;display:flex;gap:10px;cursor:pointer;}
 .log-card:active{background:var(--s2);}
@@ -112,13 +116,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 .sev-tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;color:#fff;flex-shrink:0;height:fit-content;}
 .sev-tag.nil{background:var(--gr);}.sev-tag.minor{background:var(--yw);color:#000;}.sev-tag.moderate{background:var(--or);}.sev-tag.critical{background:var(--rd);}.sev-tag.none{background:var(--s2);color:var(--tx2);}
 .empty{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--tx3);font-size:14px;text-align:center;padding:40px;}
+/* REPORT */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
 .stat-box{background:var(--s2);border-radius:var(--rs);padding:11px;text-align:center;}
 .stat-n{font-size:22px;font-weight:700;}.stat-l{font-size:11px;color:var(--tx2);margin-top:2px;}
 .n-t{color:var(--ac);}.n-nil{color:var(--gr);}.n-w{color:var(--yw);}.n-c{color:var(--rd);}
 .export-note{font-size:13px;color:var(--tx2);background:var(--s2);border-radius:var(--rs);padding:12px;line-height:1.6;margin-bottom:14px;}
 .btn-export{width:100%;padding:14px;background:var(--gr);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;}
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--s);border:.5px solid var(--bd2);border-radius:20px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--tx);box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}
+.btn-export2{width:100%;padding:14px;background:var(--ac);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);background:var(--s);border:.5px solid var(--bd2);border-radius:20px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--tx);box-shadow:0 4px 20px rgba(0,0,0,.5);z-index:9999;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .topbar{display:flex;align-items:center;gap:12px;padding:52px 18px 13px;background:var(--s);border-bottom:.5px solid var(--bd);flex-shrink:0;}
 .topbar-title{font-size:17px;font-weight:600;flex:1;}
@@ -131,13 +137,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 <div class="home-inner">
   <div class="logo">Site<span>Snag</span></div>
   <div class="tagline">Field inspection · pin · snap · report</div>
-  <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+  <div class="upload-zone" id="uploadZone">
     <div class="uz-icon">📄</div>
     <div class="uz-label">Load site plan</div>
     <div class="uz-sub">PDF or image — tap to pick from Files</div>
   </div>
   <input type="file" id="fileInput" accept="application/pdf,image/*" onchange="handleFile(this)">
-  <button class="btn-sec" onclick="startBlank()">Start without a plan</button>
+  <button class="btn-sec" id="blankBtn">Start without a plan</button>
   <div class="sec-title">Saved projects</div>
   <div id="projList"><div class="no-proj">No saved projects yet.</div></div>
 </div>
@@ -146,17 +152,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 <!-- PLAN -->
 <div class="screen hidden" id="planScreen">
   <div class="plan-bar">
-    <div class="icon-btn" onclick="goHome()">←</div>
+    <div class="icon-btn" id="backBtn">←</div>
     <div class="plan-title" id="planTitle">Site Plan</div>
     <div class="page-nav" id="pageNav" style="display:none;">
-      <div class="pg-btn" onclick="changePage(-1)">‹</div>
+      <div class="pg-btn" id="prevPg">‹</div>
       <div class="pg-lbl" id="pgLbl">1/1</div>
-      <div class="pg-btn" onclick="changePage(1)">›</div>
+      <div class="pg-btn" id="nextPg">›</div>
     </div>
-    <div class="icon-btn" onclick="showLog()">☰</div>
+    <div class="icon-btn" id="logBtn">☰</div>
   </div>
   <div class="status-bar">
-    <div class="status-mode" id="statusMode">PAN MODE — drag to navigate</div>
+    <div class="status-mode" id="statusMode">PAN — drag to navigate</div>
     <div class="status-save" id="statusSave">✓ Saved</div>
   </div>
   <div class="canvas-wrap" id="canvasWrap">
@@ -164,26 +170,26 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
     <canvas id="annotCanvas"></canvas>
     <div class="pin-layer" id="pinLayer"></div>
     <div class="zoom-wrap">
-      <div class="z-btn" onclick="doZoom(1.3)">+</div>
-      <div class="z-btn" onclick="doZoom(0.75)">−</div>
-      <div class="z-btn" style="font-size:11px;font-weight:700;" onclick="fitPlan()">FIT</div>
+      <div class="z-btn" id="zIn">+</div>
+      <div class="z-btn" id="zOut">−</div>
+      <div class="z-btn" id="zFit" style="font-size:11px;font-weight:700;">FIT</div>
     </div>
   </div>
   <div class="toolbar">
-    <div class="tb-btn" id="tbPin" onclick="setMode('pin')"><div class="tb-icon">📍</div>Pin</div>
-    <div class="tb-btn active" id="tbPan" onclick="setMode('pan')"><div class="tb-icon">✋</div>Pan</div>
-    <div class="tb-btn" id="tbDraw" onclick="setMode('draw')"><div class="tb-icon">✏️</div>Draw</div>
-    <div class="tb-btn" id="tbErase" onclick="setMode('erase')"><div class="tb-icon">⬜</div>Erase</div>
-    <div class="tb-btn" onclick="showReport()"><div class="tb-icon">📋</div>Report</div>
+    <div class="tb-btn" id="tbPin"><div class="tb-icon">📍</div>Pin</div>
+    <div class="tb-btn active" id="tbPan"><div class="tb-icon">✋</div>Pan</div>
+    <div class="tb-btn" id="tbDraw"><div class="tb-icon">✏️</div>Draw</div>
+    <div class="tb-btn" id="tbErase"><div class="tb-icon">⬜</div>Erase</div>
+    <div class="tb-btn" id="tbReport"><div class="tb-icon">📋</div>Report</div>
   </div>
 </div>
 
 <!-- LOG -->
 <div class="screen hidden" id="logScreen">
   <div class="topbar">
-    <div class="icon-btn" onclick="showScreen('planScreen')">←</div>
+    <div class="icon-btn" id="logBackBtn">←</div>
     <div class="topbar-title">Inspection log</div>
-    <div class="icon-btn" onclick="showReport()">📋</div>
+    <div class="icon-btn" id="logReportBtn">📋</div>
   </div>
   <div class="log-list" id="logList"></div>
 </div>
@@ -194,13 +200,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   <div class="handle"></div>
   <div class="sheet-hdr">
     <div class="sheet-title" id="sheetTitle">New observation</div>
-    <button class="sheet-close" onclick="closeSheet()">×</button>
+    <button class="sheet-close" id="sheetCloseBtn">×</button>
   </div>
   <div class="sheet-body">
     <div><label class="flabel">Zone / ID</label>
       <input class="finput" id="fZone" type="text" placeholder="e.g. B2, Column C1, Slab L3"></div>
     <div><label class="flabel">Element type</label>
-      <div class="chips">
+      <div class="chips" id="elemChips">
         <div class="chip" data-g="elem" data-v="Slab">Slab</div>
         <div class="chip" data-g="elem" data-v="Beam">Beam</div>
         <div class="chip" data-g="elem" data-v="Column">Column</div>
@@ -259,28 +265,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="photo-box">
         <div class="photo-grid" id="photoGrid"></div>
         <div id="photoLoading" class="p-loading" style="display:none;">Loading photos…</div>
-        <!-- NO capture attribute = shows both camera AND gallery -->
-        <div class="cam-btn" onclick="document.getElementById('camInput').click()">📷 Camera &nbsp;|&nbsp; 🖼 Gallery</div>
+        <div class="cam-btn" id="camBtn">📷 Camera &nbsp;|&nbsp; 🖼 Gallery</div>
         <input type="file" id="camInput" accept="image/*" multiple onchange="handlePhotos(this)">
       </div>
     </div>
     <div><label class="flabel">Remarks</label>
-      <textarea class="finput" id="fRemarks" rows="3" style="height:76px;resize:none;" placeholder="e.g. Crack ~0.3mm, hairline, horizontal along joint…"></textarea>
+      <textarea class="finput" id="fRemarks" rows="3" style="height:76px;resize:none;" placeholder="e.g. Crack ~0.3mm, hairline, horizontal…"></textarea>
     </div>
-    <button class="btn-save" onclick="savePin()">✓ Save observation</button>
-    <button class="btn-del-pin" id="delPinBtn" onclick="deletePin()" style="display:none;">Delete this pin</button>
+    <button class="btn-save" id="savePinBtn">✓ Save observation</button>
+    <button class="btn-del-pin" id="delPinBtn" style="display:none;">🗑 Delete this pin / 删除此标记</button>
     <div style="height:20px;"></div>
   </div>
 </div>
 </div>
 
-<!-- REPORT -->
+<!-- REPORT SHEET -->
 <div class="overlay" id="reportOverlay">
 <div class="sheet">
   <div class="handle"></div>
   <div class="sheet-hdr">
     <div class="sheet-title">Inspection summary</div>
-    <button class="sheet-close" onclick="closeOverlay('reportOverlay')">×</button>
+    <button class="sheet-close" id="reportCloseBtn">×</button>
   </div>
   <div class="sheet-body">
     <div class="stats-row">
@@ -289,12 +294,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
       <div class="stat-box"><div class="stat-n n-w" id="rW">0</div><div class="stat-l">Minor/Mod</div></div>
       <div class="stat-box"><div class="stat-n n-c" id="rC">0</div><div class="stat-l">Critical</div></div>
     </div>
-    <div class="export-note">Export creates a self-contained HTML file with all photos embedded.<br>Chrome → Share → Print → Save as PDF.</div>
-    <button class="btn-export" onclick="exportReport()">⬇ Export inspection report</button>
-    <button class="btn-sec" style="margin-top:0;" onclick="newProject()">New project / clear</button>
+    <div class="export-note">All exports include pin numbers matching what you see on the plan. Use Chrome → Share → Print to save as PDF.</div>
+    <button class="btn-export" id="exportHtmlBtn">⬇ Export full report (HTML + photos)</button>
+    <button class="btn-export2" id="exportPlanBtn">🗺 Export plan with pins (PDF-ready)</button>
+    <button class="btn-sec" style="margin-top:0;" id="newProjBtn">New project / clear</button>
     <div style="height:8px;"></div>
   </div>
 </div>
+</div>
+
+<!-- BILINGUAL CONFIRM MODAL -->
+<div class="overlay" id="confirmModal" style="z-index:200;align-items:center;justify-content:center;">
+  <div style="background:var(--s);border-radius:16px;width:88%;max-width:340px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.6);">
+    <div style="padding:24px 22px 16px;">
+      <div style="font-size:18px;font-weight:700;color:var(--rd);margin-bottom:4px;" id="cmTitleEn"></div>
+      <div style="font-size:16px;font-weight:600;color:var(--rd);margin-bottom:12px;" id="cmTitleZh"></div>
+      <div style="font-size:13px;color:var(--tx2);margin-bottom:2px;" id="cmSubEn"></div>
+      <div style="font-size:13px;color:var(--tx2);" id="cmSubZh"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-top:.5px solid var(--bd);">
+      <button id="cmNo" style="padding:16px;background:transparent;border:none;border-right:.5px solid var(--bd);color:var(--tx2);font-size:15px;font-weight:500;cursor:pointer;">
+        Cancel / 取消
+      </button>
+      <button id="cmYes" style="padding:16px;background:transparent;border:none;color:var(--rd);font-size:15px;font-weight:700;cursor:pointer;">
+        Delete / 删除
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -306,20 +332,20 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 let db;
 function openDB(){
   return new Promise((res,rej)=>{
-    const r=indexedDB.open('sitesnag_v4',1);
+    const r=indexedDB.open('sitesnag_v5',1);
     r.onupgradeneeded=e=>{
       const d=e.target.result;
       ['projects','photos','plans'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s,{keyPath:'id'});});
     };
     r.onsuccess=e=>{db=e.target.result;res(db);};
-    r.onerror=e=>rej(e);
+    r.onerror=e=>rej(e.target.error);
   });
 }
-const txs=(s,m)=>db.transaction(s,m).objectStore(s);
-function put(s,o){return new Promise((r,j)=>{txs(s,'readwrite').put(o).onsuccess=()=>r();});}
-function get(s,k){return new Promise((r,j)=>{const req=txs(s,'readonly').get(k);req.onsuccess=e=>r(e.target.result);req.onerror=j;});}
-function del(s,k){return new Promise((r,j)=>{txs(s,'readwrite').delete(k).onsuccess=()=>r();});}
-function all(s){return new Promise((r,j)=>{const req=txs(s,'readonly').getAll();req.onsuccess=e=>r(e.target.result);req.onerror=j;});}
+function dbTx(s,m){return db.transaction(s,m).objectStore(s);}
+function dbPut(s,o){return new Promise((r,j)=>{const req=dbTx(s,'readwrite').put(o);req.onsuccess=()=>r();req.onerror=e=>j(e.target.error);});}
+function dbGet(s,k){return new Promise((r,j)=>{const req=dbTx(s,'readonly').get(k);req.onsuccess=e=>r(e.target.result);req.onerror=e=>j(e.target.error);});}
+function dbDel(s,k){return new Promise((r,j)=>{const req=dbTx(s,'readwrite').delete(k);req.onsuccess=()=>r();req.onerror=e=>j(e.target.error);});}
+function dbAll(s){return new Promise((r,j)=>{const req=dbTx(s,'readonly').getAll();req.onsuccess=e=>r(e.target.result);req.onerror=e=>j(e.target.error);});}
 
 // ── State ─────────────────────────────────────────────────
 let pdfDoc=null,curPage=1,totalPages=1;
@@ -328,37 +354,24 @@ let pins=[],editId=null,dropX=0,dropY=0;
 let curPhotos=[];
 let selE=new Set(),selD=new Set(),selDef=new Set(),selSev='';
 let drawing=false,panning=false,panSt=null,panOff=null;
-// Separate annotation data per page — stored as dataURL from annotCanvas only
 let annotData={};
-let projId=null,projName='Site Plan',saveTimer=null;
+let projId=null,projName='Site Plan';
 let touchSt=null;
+let isSaving=false;
 
-// ── Annot canvas helpers ───────────────────────────────────
-function getAnnotCtx(){return document.getElementById('annotCanvas').getContext('2d');}
-
-function saveAnnotData(){
-  const ac=document.getElementById('annotCanvas');
-  if(ac.width>0) annotData[curPage]=ac.toDataURL('image/png');
-}
-
-function restoreAnnotData(page){
-  const ac=document.getElementById('annotCanvas');
-  const ctx=ac.getContext('2d');
-  ctx.clearRect(0,0,ac.width,ac.height);
-  if(annotData[page]){
-    const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,ac.width,ac.height);img.src=annotData[page];
-  }
-}
-
-function sizeAnnotCanvas(){
-  const pc=document.getElementById('planCanvas'),ac=document.getElementById('annotCanvas');
-  ac.width=pc.width;ac.height=pc.height;
-  ac.style.width=pc.style.width;ac.style.height=pc.style.height;
-  ac.style.left=pc.style.left;ac.style.top=pc.style.top;
+// ── Global pin number (across all pages, sorted by creation order) ──
+function globalPinNum(pinId){
+  const sorted=[...pins].sort((a,b)=>a.id-b.id);
+  return sorted.findIndex(p=>p.id===pinId)+1;
 }
 
 // ── Toast ─────────────────────────────────────────────────
-function toast(msg,dur=2200){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),dur);}
+let toastTimer=null;
+function toast(msg,dur=2200){
+  clearTimeout(toastTimer);
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  toastTimer=setTimeout(()=>t.classList.remove('show'),dur);
+}
 
 // ── Screens ───────────────────────────────────────────────
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id));}
@@ -366,58 +379,131 @@ function goHome(){saveAnnotData();showScreen('homeScreen');loadProjList();}
 function showLog(){renderLog();showScreen('logScreen');}
 function closeOverlay(id){document.getElementById(id).classList.remove('open');}
 
+// ── Button wiring (use both click + touchend for reliability) ──
+function onBtn(id,fn){
+  const el=document.getElementById(id);if(!el)return;
+  el.addEventListener('click',fn);
+}
+onBtn('backBtn',goHome);
+onBtn('logBtn',showLog);
+onBtn('prevPg',()=>changePage(-1));
+onBtn('nextPg',()=>changePage(1));
+onBtn('zIn',()=>doZoom(1.3));
+onBtn('zOut',()=>doZoom(0.77));
+onBtn('zFit',fitPlan);
+onBtn('tbPin',()=>setMode('pin'));
+onBtn('tbPan',()=>setMode('pan'));
+onBtn('tbDraw',()=>setMode('draw'));
+onBtn('tbErase',()=>setMode('erase'));
+onBtn('tbReport',showReport);
+onBtn('logBackBtn',()=>showScreen('planScreen'));
+onBtn('logReportBtn',showReport);
+onBtn('sheetCloseBtn',closeSheet);
+onBtn('savePinBtn',savePin);
+onBtn('delPinBtn',deletePin);
+onBtn('camBtn',()=>document.getElementById('camInput').click());
+onBtn('reportCloseBtn',()=>closeOverlay('reportOverlay'));
+onBtn('exportHtmlBtn',exportHtmlReport);
+onBtn('exportPlanBtn',exportPlanWithPins);
+onBtn('newProjBtn',newProject);
+onBtn('uploadZone',()=>document.getElementById('fileInput').click());
+onBtn('blankBtn',startBlank);
+
+// ── Annot canvas ──────────────────────────────────────────
+function getAC(){return document.getElementById('annotCanvas');}
+function getACCtx(){return getAC().getContext('2d');}
+function sizeAnnotCanvas(){
+  const pc=document.getElementById('planCanvas'),ac=getAC();
+  ac.width=pc.width;ac.height=pc.height;
+  ac.style.width=pc.style.width;ac.style.height=pc.style.height;
+  ac.style.left=pc.style.left;ac.style.top=pc.style.top;
+}
+function saveAnnotData(){
+  const ac=getAC();if(ac.width>0)annotData[curPage]=ac.toDataURL('image/png');
+}
+function restoreAnnotData(page){
+  const ac=getAC(),ctx=getACCtx();
+  ctx.clearRect(0,0,ac.width,ac.height);
+  if(annotData[page]){const img=new Image();img.onload=()=>ctx.drawImage(img,0,0,ac.width,ac.height);img.src=annotData[page];}
+}
+function setAnnotPointerEvents(on){
+  getAC().style.pointerEvents=on?'all':'none';
+}
+
 // ── Project list ──────────────────────────────────────────
 async function loadProjList(){
   const list=document.getElementById('projList');
-  const ps=await all('projects');ps.sort((a,b)=>b.savedAt-a.savedAt);
-  if(!ps.length){list.innerHTML='<div class="no-proj">No saved projects yet.</div>';return;}
-  list.innerHTML=ps.map(p=>{
-    const d=new Date(p.savedAt).toLocaleDateString('en-SG',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-    return`<div class="proj-card" onclick="resumeProj('${p.id}')">
-      <div class="proj-info"><div class="proj-name">${p.name}</div><div class="proj-meta">${p.pinCount||0} obs · ${d}</div></div>
-      <button class="proj-del" onclick="delProj('${p.id}',event)">×</button></div>`;
-  }).join('')+`<button class="btn-sec" style="margin-top:4px;" onclick="document.getElementById('fileInput').click()">+ New project from plan</button>`;
+  try{
+    const ps=await dbAll('projects');ps.sort((a,b)=>b.savedAt-a.savedAt);
+    if(!ps.length){list.innerHTML='<div class="no-proj">No saved projects yet.</div>';return;}
+    list.innerHTML=ps.map(p=>{
+      const d=new Date(p.savedAt).toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      return`<div class="proj-card" data-id="${p.id}">
+        <div class="proj-info"><div class="proj-name">${p.name}</div><div class="proj-meta">${p.pinCount||0} pins · ${d}</div></div>
+        <button class="proj-del" data-del="${p.id}">×</button></div>`;
+    }).join('')+`<button class="btn-sec" id="newFromPlanBtn" style="margin-top:4px;">+ New project from plan</button>`;
+    list.querySelectorAll('.proj-card').forEach(card=>{
+      card.addEventListener('click',e=>{if(e.target.dataset.del)return;resumeProj(card.dataset.id);});
+    });
+    list.querySelectorAll('[data-del]').forEach(btn=>{
+      btn.addEventListener('click',e=>{e.stopPropagation();delProj(btn.dataset.del);});
+    });
+    document.getElementById('newFromPlanBtn')?.addEventListener('click',()=>document.getElementById('fileInput').click());
+  }catch(e){list.innerHTML='<div class="no-proj">Error loading projects.</div>';console.error(e);}
 }
 
-async function delProj(id,e){
-  e.stopPropagation();if(!confirm('Delete project and all photos?'))return;
-  const p=await get('projects',id);
-  if(p&&p.pins)for(const pin of p.pins)for(const pid of(pin.photoIds||[]))await del('photos',pid);
-  await del('projects',id);await del('plans',id);loadProjList();toast('Deleted');
+async function delProj(id){
+  if(!confirm('Delete project and all photos?'))return;
+  try{
+    const p=await dbGet('projects',id);
+    if(p&&p.pins)for(const pin of p.pins)for(const pid of(pin.photoIds||[]))await dbDel('photos',pid);
+    await dbDel('projects',id);await dbDel('plans',id);
+  }catch(e){}
+  loadProjList();toast('Project deleted');
 }
 
 async function resumeProj(id){
-  const p=await get('projects',id);if(!p){toast('Could not load');return;}
-  projId=p.id;projName=p.name;pins=p.pins||[];annotData=p.annotData||{};
-  curPage=p.curPage||1;totalPages=p.totalPages||1;
-  document.getElementById('planTitle').textContent=projName;
-  showScreen('planScreen');
-  const plan=await get('plans',id);
-  if(plan&&plan.dataUrl)loadImgUrl(plan.dataUrl);
-  else blankCanvas();
-  if(totalPages>1)document.getElementById('pageNav').style.display='flex';
-  updatePgLbl();toast('Resumed: '+projName);
+  try{
+    const p=await dbGet('projects',id);if(!p){toast('Could not load project');return;}
+    projId=p.id;projName=p.name;pins=p.pins||[];annotData=p.annotData||{};
+    curPage=p.curPage||1;totalPages=p.totalPages||1;
+    document.getElementById('planTitle').textContent=projName;
+    showScreen('planScreen');
+    const plan=await dbGet('plans',id);
+    if(plan&&plan.dataUrl)loadImgUrl(plan.dataUrl);
+    else blankCanvas();
+    if(totalPages>1)document.getElementById('pageNav').style.display='flex';
+    updatePgLbl();toast('Resumed: '+projName);
+  }catch(e){toast('Load error: '+e.message);}
 }
 
 // ── File handling ─────────────────────────────────────────
 function handleFile(inp){
   const f=inp.files[0];if(!f)return;
-  projName=f.name.replace(/\.[^.]+$/,'');projId='p'+Date.now();pins=[];annotData={};curPage=1;
+  projName=f.name.replace(/\.[^.]+$/,'');projId='p'+Date.now();pins=[];annotData={};curPage=1;totalPages=1;
   document.getElementById('planTitle').textContent=projName;
-  if(f.type==='application/pdf'){const fr=new FileReader();fr.onload=e=>loadPDF(e.target.result);fr.readAsArrayBuffer(f);}
-  else{const fr=new FileReader();fr.onload=e=>{loadImgUrl(e.target.result);put('plans',{id:projId,dataUrl:e.target.result});};fr.readAsDataURL(f);}
+  if(f.type==='application/pdf'){
+    const fr=new FileReader();
+    fr.onload=e=>loadPDF(e.target.result);
+    fr.readAsArrayBuffer(f);
+  } else {
+    const fr=new FileReader();
+    fr.onload=e=>{loadImgUrl(e.target.result);dbPut('plans',{id:projId,dataUrl:e.target.result}).catch(()=>{});};
+    fr.readAsDataURL(f);
+  }
   inp.value='';
 }
 
 function startBlank(){
-  projName='Blank';projId='p'+Date.now();pins=[];annotData={};
-  document.getElementById('planTitle').textContent=projName;showScreen('planScreen');blankCanvas();
+  projName='Blank canvas';projId='p'+Date.now();pins=[];annotData={};curPage=1;totalPages=1;
+  document.getElementById('planTitle').textContent=projName;
+  showScreen('planScreen');blankCanvas();
 }
 
 function blankCanvas(){
   const cv=document.getElementById('planCanvas'),wrap=document.getElementById('canvasWrap'),dpr=window.devicePixelRatio||1;
-  cv.width=wrap.clientWidth*dpr;cv.height=wrap.clientHeight*dpr;
-  cv.style.width=wrap.clientWidth+'px';cv.style.height=wrap.clientHeight+'px';
+  const w=wrap.clientWidth,h=wrap.clientHeight;
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';
   offX=0;offY=0;posCV();
   const ctx=cv.getContext('2d');ctx.fillStyle='#141720';ctx.fillRect(0,0,cv.width,cv.height);
   ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=0.5;
@@ -427,26 +513,32 @@ function blankCanvas(){
 }
 
 async function loadPDF(buf){
+  toast('Loading PDF…',3000);
   showScreen('planScreen');
-  pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
-  totalPages=pdfDoc.numPages;curPage=1;
-  if(totalPages>1)document.getElementById('pageNav').style.display='flex';
-  await renderPDFPage(curPage);setMode('pan');
+  try{
+    pdfDoc=await pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
+    totalPages=pdfDoc.numPages;curPage=1;
+    if(totalPages>1)document.getElementById('pageNav').style.display='flex';
+    await renderPDFPage(curPage);setMode('pan');
+  }catch(e){toast('PDF load error: '+e.message);}
 }
 
 async function renderPDFPage(n){
-  const page=await pdfDoc.getPage(n);
-  const wrap=document.getElementById('canvasWrap'),cv=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
-  const vw=wrap.clientWidth,vh=wrap.clientHeight;
-  const vp0=page.getViewport({scale:1});const fit=Math.min(vw/vp0.width,vh/vp0.height);
-  const vp=page.getViewport({scale:fit*dpr});
-  cv.width=vp.width;cv.height=vp.height;
-  cv.style.width=(vp.width/dpr)+'px';cv.style.height=(vp.height/dpr)+'px';
-  offX=(vw-vp.width/dpr)/2;offY=(vh-vp.height/dpr)/2;posCV();
-  await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
-  if(n===1)put('plans',{id:projId,dataUrl:cv.toDataURL('image/jpeg',0.6)});
-  sizeAnnotCanvas();restoreAnnotData(n);
-  updatePgLbl();renderPins();
+  try{
+    const page=await pdfDoc.getPage(n);
+    const wrap=document.getElementById('canvasWrap'),cv=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
+    const vw=wrap.clientWidth,vh=wrap.clientHeight;
+    const vp0=page.getViewport({scale:1});
+    const fit=Math.min(vw/vp0.width,vh/vp0.height)*0.97;
+    const vp=page.getViewport({scale:fit*dpr});
+    cv.width=vp.width;cv.height=vp.height;
+    cv.style.width=(vp.width/dpr)+'px';cv.style.height=(vp.height/dpr)+'px';
+    offX=(vw-vp.width/dpr)/2;offY=(vh-vp.height/dpr)/2;posCV();
+    await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+    if(n===1)dbPut('plans',{id:projId,dataUrl:cv.toDataURL('image/jpeg',0.65)}).catch(()=>{});
+    sizeAnnotCanvas();restoreAnnotData(n);
+    updatePgLbl();renderPins();
+  }catch(e){toast('Page render error: '+e.message);}
 }
 
 function loadImgUrl(dataUrl){
@@ -454,26 +546,34 @@ function loadImgUrl(dataUrl){
   const wrap=document.getElementById('canvasWrap'),cv=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
   const img=new Image();
   img.onload=()=>{
-    const vw=wrap.clientWidth,vh=wrap.clientHeight,fit=Math.min(vw/img.width,vh/img.height);
+    const vw=wrap.clientWidth,vh=wrap.clientHeight;
+    const fit=Math.min(vw/img.width,vh/img.height)*0.97;
     cv.width=img.width*fit*dpr;cv.height=img.height*fit*dpr;
     cv.style.width=(img.width*fit)+'px';cv.style.height=(img.height*fit)+'px';
     offX=(vw-img.width*fit)/2;offY=(vh-img.height*fit)/2;posCV();
     cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
     sizeAnnotCanvas();restoreAnnotData(curPage);setMode('pan');renderPins();
-  };img.src=dataUrl;
+  };
+  img.onerror=()=>toast('Image load error');
+  img.src=dataUrl;
 }
 
 function posCV(){
-  const cv=document.getElementById('planCanvas'),ac=document.getElementById('annotCanvas');
-  cv.style.left=offX+'px';cv.style.top=offY+'px';
-  ac.style.left=offX+'px';ac.style.top=offY+'px';
-  document.getElementById('pinLayer').style.left=offX+'px';document.getElementById('pinLayer').style.top=offY+'px';
+  const cv=document.getElementById('planCanvas'),ac=getAC(),pl=document.getElementById('pinLayer');
+  [cv,ac,pl].forEach(el=>{el.style.left=offX+'px';el.style.top=offY+'px';});
 }
 
-function changePage(d){const np=curPage+d;if(np<1||np>totalPages)return;saveAnnotData();curPage=np;renderPDFPage(curPage);}
-function updatePgLbl(){document.getElementById('pgLbl').textContent=curPage+'/'+totalPages;document.getElementById('pageNav').style.display=totalPages>1?'flex':'none';}
+function changePage(d){
+  const np=curPage+d;if(np<1||np>totalPages)return;
+  saveAnnotData();curPage=np;
+  if(pdfDoc)renderPDFPage(curPage);
+}
+function updatePgLbl(){
+  document.getElementById('pgLbl').textContent=curPage+'/'+totalPages;
+  document.getElementById('pageNav').style.display=totalPages>1?'flex':'none';
+}
 function doZoom(f){
-  const cv=document.getElementById('planCanvas'),ac=document.getElementById('annotCanvas');
+  const cv=document.getElementById('planCanvas'),ac=getAC();
   const nw=(parseFloat(cv.style.width)*f)+'px',nh=(parseFloat(cv.style.height)*f)+'px';
   cv.style.width=nw;cv.style.height=nh;ac.style.width=nw;ac.style.height=nh;renderPins();
 }
@@ -485,77 +585,85 @@ function setMode(m){
   ['tbPin','tbPan','tbDraw','tbErase'].forEach(id=>document.getElementById(id).classList.remove('active'));
   const map={pin:'tbPin',pan:'tbPan',draw:'tbDraw',erase:'tbErase'};
   if(map[m])document.getElementById(map[m]).classList.add('active');
-  const msgs={pin:'PIN MODE — tap to place a pin',pan:'PAN MODE — drag to navigate',draw:'DRAW MODE — draw on plan',erase:'ERASE MODE — rub to erase drawing'};
+  // annotCanvas intercepts touches only in draw/erase mode
+  setAnnotPointerEvents(m==='draw'||m==='erase');
+  const msgs={pin:'PIN — tap plan to place pin',pan:'PAN — drag to navigate',draw:'DRAW — draw on plan',erase:'ERASE — rub to erase'};
   document.getElementById('statusMode').textContent=msgs[m]||'';
 }
 
-// ── Touch events (annotCanvas is on top, receives all touches) ──
-const acEl=document.getElementById('annotCanvas');
-
-function getPos(touch){
-  const ac=document.getElementById('annotCanvas'),r=ac.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
-  return{cx:(touch.clientX-r.left)*dpr,cy:(touch.clientY-r.top)*dpr,lx:touch.clientX-offX,ly:touch.clientY-offY,px:touch.clientX,py:touch.clientY};
+// ── Touch helpers ─────────────────────────────────────────
+function getPos(touch,el){
+  const r=el.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  return{cx:(touch.clientX-r.left)*dpr,cy:(touch.clientY-r.top)*dpr,
+         lx:touch.clientX-offX,ly:touch.clientY-offY,
+         px:touch.clientX,py:touch.clientY};
 }
 
-acEl.addEventListener('touchstart',e=>{
+// ── Canvas wrap touch (Pan + Pin) ─────────────────────────
+const cw=document.getElementById('canvasWrap');
+cw.addEventListener('touchstart',e=>{
+  // Only handle if not in draw/erase (annotCanvas handles those)
+  if(mode==='draw'||mode==='erase')return;
   e.preventDefault();
-  const t=e.touches[0],pos=getPos(t);
-  touchSt={x:t.clientX,y:t.clientY,time:Date.now(),pos};
-  if(mode==='pan'){
-    panning=true;panSt={x:t.clientX,y:t.clientY};panOff={x:offX,y:offY};
-  } else if(mode==='draw'){
-    drawing=true;
-    const ctx=getAnnotCtx();
-    ctx.globalCompositeOperation='source-over';
-    ctx.strokeStyle='#4f8ef7';ctx.lineWidth=3*(window.devicePixelRatio||1);
-    ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(pos.cx,pos.cy);
-  } else if(mode==='erase'){
-    drawing=true;
-    const ctx=getAnnotCtx();
-    // destination-out on transparent canvas = true erase, no black paint
-    ctx.globalCompositeOperation='destination-out';
-    ctx.strokeStyle='rgba(0,0,0,1)';ctx.lineWidth=40*(window.devicePixelRatio||1);
-    ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(pos.cx,pos.cy);
-  }
+  const t=e.touches[0],pos=getPos(t,document.getElementById('planCanvas'));
+  touchSt={x:t.clientX,y:t.clientY,time:Date.now(),pos,moved:false};
+  if(mode==='pan'){panning=true;panSt={x:t.clientX,y:t.clientY};panOff={x:offX,y:offY};}
 },{passive:false});
 
-acEl.addEventListener('touchmove',e=>{
+cw.addEventListener('touchmove',e=>{
+  if(mode==='draw'||mode==='erase')return;
   e.preventDefault();
-  const t=e.touches[0],pos=getPos(t);
-  // cancel pan detection if moved
-  if(touchSt&&mode==='pin'){
-    const dx=t.clientX-touchSt.x,dy=t.clientY-touchSt.y;
-    if(Math.sqrt(dx*dx+dy*dy)>10)touchSt=null;
-  }
-  if(mode==='pan'&&panning){
-    offX=panOff.x+(t.clientX-panSt.x);offY=panOff.y+(t.clientY-panSt.y);posCV();
-  } else if((mode==='draw'||mode==='erase')&&drawing){
-    getAnnotCtx().lineTo(pos.cx,pos.cy);getAnnotCtx().stroke();
-  }
+  const t=e.touches[0];
+  if(touchSt){const dx=t.clientX-touchSt.x,dy=t.clientY-touchSt.y;if(Math.sqrt(dx*dx+dy*dy)>8)touchSt.moved=true;}
+  if(mode==='pan'&&panning){offX=panOff.x+(t.clientX-panSt.x);offY=panOff.y+(t.clientY-panSt.y);posCV();}
 },{passive:false});
 
-acEl.addEventListener('touchend',e=>{
+cw.addEventListener('touchend',e=>{
+  if(mode==='draw'||mode==='erase')return;
   e.preventDefault();
-  if(mode==='pin'&&touchSt){
-    const ch=e.changedTouches[0];
-    const dx=ch.clientX-touchSt.x,dy=ch.clientY-touchSt.y;
-    if(Math.sqrt(dx*dx+dy*dy)<12&&(Date.now()-touchSt.time)<600){
-      dropX=touchSt.pos.lx;dropY=touchSt.pos.ly;openPinSheet(null);
-    }
+  if(mode==='pin'&&touchSt&&!touchSt.moved){
+    const dur=Date.now()-touchSt.time;
+    if(dur<700){dropX=touchSt.pos.lx;dropY=touchSt.pos.ly;openPinSheet(null);}
   }
   if(mode==='pan')panning=false;
-  if(mode==='draw'||mode==='erase'){
-    drawing=false;
-    // reset composite op
-    getAnnotCtx().globalCompositeOperation='source-over';
-    saveAnnotData();triggerSave();
-  }
   touchSt=null;
 },{passive:false});
 
-acEl.addEventListener('touchcancel',()=>{
-  panning=false;drawing=false;touchSt=null;
-  getAnnotCtx().globalCompositeOperation='source-over';
+cw.addEventListener('touchcancel',()=>{panning=false;touchSt=null;});
+
+// ── Annot canvas touch (Draw + Erase) ─────────────────────
+const ac=getAC();
+ac.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  const t=e.touches[0],pos=getPos(t,ac);
+  drawing=true;
+  const ctx=getACCtx();
+  if(mode==='draw'){
+    ctx.globalCompositeOperation='source-over';
+    ctx.strokeStyle='#4f8ef7';ctx.lineWidth=3*(window.devicePixelRatio||1);
+  } else {
+    ctx.globalCompositeOperation='destination-out';
+    ctx.strokeStyle='rgba(0,0,0,1)';ctx.lineWidth=44*(window.devicePixelRatio||1);
+  }
+  ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(pos.cx,pos.cy);
+},{passive:false});
+
+ac.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  if(!drawing)return;
+  const t=e.touches[0],pos=getPos(t,ac);
+  getACCtx().lineTo(pos.cx,pos.cy);getACCtx().stroke();
+},{passive:false});
+
+ac.addEventListener('touchend',e=>{
+  e.preventDefault();
+  drawing=false;
+  getACCtx().globalCompositeOperation='source-over';
+  saveAnnotData();hardSave();
+},{passive:false});
+
+ac.addEventListener('touchcancel',()=>{
+  drawing=false;getACCtx().globalCompositeOperation='source-over';
 });
 
 // ── Chips ─────────────────────────────────────────────────
@@ -580,7 +688,7 @@ async function handlePhotos(inp){
   document.getElementById('photoLoading').style.display='block';
   for(const f of files){
     const id='ph'+Date.now()+'_'+Math.random().toString(36).slice(2);
-    await put('photos',{id,blob:f,projId});
+    try{await dbPut('photos',{id,blob:f,projId});}catch(e){toast('Photo save error: '+e.message);continue;}
     curPhotos.push({id,url:URL.createObjectURL(f)});
   }
   document.getElementById('photoLoading').style.display='none';
@@ -593,9 +701,9 @@ async function loadPinPhotos(ids){
   document.getElementById('photoLoading').style.display='block';
   for(const id of ids){
     try{
-      const r=await get('photos',id);
-      if(r&&r.blob){curPhotos.push({id,url:URL.createObjectURL(r.blob)});}
-    }catch(e){console.warn('Photo load failed',id,e);}
+      const r=await dbGet('photos',id);
+      if(r&&r.blob)curPhotos.push({id,url:URL.createObjectURL(r.blob)});
+    }catch(e){console.warn('photo load',id,e);}
   }
   document.getElementById('photoLoading').style.display='none';
   renderPhotoGrid();
@@ -606,17 +714,18 @@ function renderPhotoGrid(){
   curPhotos.forEach((p,i)=>{
     const d=document.createElement('div');d.className='p-thumb';
     const img=document.createElement('img');img.src=p.url;
-    img.onerror=()=>{img.src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23333" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%23888" font-size="30">?</text></svg>';};
+    img.onerror=()=>{d.style.background='#333';img.style.display='none';};
     const x=document.createElement('div');x.className='p-del';x.textContent='×';
-    x.onclick=ev=>{
+    x.addEventListener('click',ev=>{
       ev.stopPropagation();
       URL.revokeObjectURL(curPhotos[i].url);
-      del('photos',curPhotos[i].id);
+      dbDel('photos',curPhotos[i].id).catch(()=>{});
       curPhotos.splice(i,1);renderPhotoGrid();
-    };
+    });
     d.appendChild(img);d.appendChild(x);g.appendChild(d);
   });
-  document.getElementById('photoCount').textContent=curPhotos.length?`(${curPhotos.length} photo${curPhotos.length>1?'s':''})`:'' ;
+  const n=curPhotos.length;
+  document.getElementById('photoCount').textContent=n?`(${n} photo${n>1?'s':''})`:' ';
 }
 
 // ── Pin sheet ─────────────────────────────────────────────
@@ -627,22 +736,21 @@ async function openPinSheet(id){
   document.getElementById('sheetTitle').textContent=id?'Edit observation':'New observation';
   document.getElementById('delPinBtn').style.display=id?'block':'none';
   document.getElementById('photoGrid').innerHTML='';
-  document.getElementById('photoCount').textContent='';
+  document.getElementById('photoCount').textContent=' ';
   if(id){
     const pin=pins.find(p=>p.id===id);
     if(pin){
       document.getElementById('fZone').value=pin.zone||'';
       document.getElementById('fRemarks').value=pin.remarks||'';
       selE=new Set(pin.elems||[]);selD=new Set(pin.dirs||[]);selDef=new Set(pin.defects||[]);selSev=pin.sev||'';
-      syncChips();
-      document.getElementById('pinOverlay').classList.add('open');
-      // load photos AFTER sheet is open so user sees it loading
-      await loadPinPhotos(pin.photoIds||[]);
-      return;
     }
   }
   syncChips();
   document.getElementById('pinOverlay').classList.add('open');
+  if(id){
+    const pin=pins.find(p=>p.id===id);
+    if(pin)await loadPinPhotos(pin.photoIds||[]);
+  }
 }
 
 function closeSheet(){
@@ -651,66 +759,89 @@ function closeSheet(){
 }
 
 async function savePin(){
-  const zone=document.getElementById('fZone').value.trim()||`#${pins.length+1}`;
+  const zone=document.getElementById('fZone').value.trim()||`Pin ${pins.length+1}`;
   const remarks=document.getElementById('fRemarks').value.trim();
   const photoIds=curPhotos.map(p=>p.id);
   if(editId){
     const pin=pins.find(p=>p.id===editId);
     if(pin)Object.assign(pin,{zone,sev:selSev,elems:[...selE],dirs:[...selD],defects:[...selDef],photoIds,remarks,page:curPage});
   } else {
-    pins.push({id:Date.now(),x:dropX,y:dropY,zone,sev:selSev,elems:[...selE],dirs:[...selD],defects:[...selDef],photoIds,remarks,page:curPage,time:new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})});
+    pins.push({id:Date.now(),x:dropX,y:dropY,zone,sev:selSev,
+      elems:[...selE],dirs:[...selD],defects:[...selDef],photoIds,remarks,page:curPage,
+      time:new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'})});
   }
-  closeSheet();renderPins();await triggerSave();toast('✓ Saved');
+  closeSheet();renderPins();
+  await hardSave();
+  toast('✓ Saved');
 }
 
 async function deletePin(){
-  if(!editId||!confirm('Delete this pin?'))return;
+  if(!editId)return;
+  const confirmed=await bilingualConfirm(
+    'Delete this pin?',
+    '确定要删除此标记吗？',
+    'Once deleted it cannot be recovered.',
+    '删除后将无法恢复。'
+  );
+  if(!confirmed)return;
   const pin=pins.find(p=>p.id===editId);
-  if(pin)for(const pid of(pin.photoIds||[]))await del('photos',pid);
+  if(pin)for(const pid of(pin.photoIds||[]))await dbDel('photos',pid).catch(()=>{});
   pins=pins.filter(p=>p.id!==editId);
-  closeSheet();renderPins();await triggerSave();toast('Pin deleted');
+  closeSheet();renderPins();await hardSave();toast('Pin deleted');
 }
 
-// ── Render pins ───────────────────────────────────────────
+// ── Render pins (global sequential numbers) ───────────────
 function renderPins(){
   const layer=document.getElementById('pinLayer'),cv=document.getElementById('planCanvas'),dpr=window.devicePixelRatio||1;
-  const sw=parseFloat(cv.style.width)||(cv.width/dpr);
-  const sh=parseFloat(cv.style.height)||(cv.height/dpr);
-  const sx=sw/(cv.width/dpr)||1,sy=sh/(cv.height/dpr)||1;
+  const sw=parseFloat(cv.style.width)||(cv.width/dpr)||1;
+  const sh=parseFloat(cv.style.height)||(cv.height/dpr)||1;
+  const sx=sw/(cv.width/dpr),sy=sh/(cv.height/dpr);
   layer.style.width=sw+'px';layer.style.height=sh+'px';
-  const pg=pins.filter(p=>(p.page||1)===curPage);
-  layer.innerHTML=pg.map((p,i)=>`
-    <div class="pin ${p.sev||'none'}" style="left:${p.x*sx}px;top:${p.y*sy}px;" onclick="openPinSheet(${p.id})">
-      <div class="pin-head"><span class="pin-num">${i+1}</span></div>
+  // Sort all pins by creation order for global numbering
+  const allSorted=[...pins].sort((a,b)=>a.id-b.id);
+  const pagePins=allSorted.filter(p=>(p.page||1)===curPage);
+  layer.innerHTML=pagePins.map(p=>{
+    const num=allSorted.indexOf(p)+1;
+    return`<div class="pin ${p.sev||'none'}" style="left:${p.x*sx}px;top:${p.y*sy}px;" data-pid="${p.id}">
+      <div class="pin-head"><span class="pin-num">${num}</span></div>
       <div class="pin-tail"></div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+  // wire tap on pins
+  layer.querySelectorAll('.pin').forEach(el=>{
+    el.addEventListener('click',e=>{e.stopPropagation();openPinSheet(parseInt(el.dataset.pid));});
+  });
 }
 
-// ── Save ──────────────────────────────────────────────────
-function triggerSave(){
-  clearTimeout(saveTimer);
-  return new Promise(res=>{
-    saveTimer=setTimeout(async()=>{
-      try{
-        saveAnnotData();
-        await put('projects',{id:projId,name:projName,pins,annotData,curPage,totalPages,pinCount:pins.length,savedAt:Date.now()});
-        const dot=document.getElementById('statusSave');dot.classList.add('show');setTimeout(()=>dot.classList.remove('show'),2000);
-      }catch(e){toast('⚠ Save error: '+e.message);}
-      res();
-    },500);
-  });
+// ── Hard save (immediate, no debounce) ────────────────────
+async function hardSave(){
+  if(isSaving)return;
+  isSaving=true;
+  try{
+    saveAnnotData();
+    await dbPut('projects',{
+      id:projId,name:projName,pins,annotData,
+      curPage,totalPages,pinCount:pins.length,savedAt:Date.now()
+    });
+    const dot=document.getElementById('statusSave');
+    dot.classList.add('show');setTimeout(()=>dot.classList.remove('show'),2000);
+  }catch(e){
+    toast('⚠ Save failed: '+e.message);
+    console.error('hardSave',e);
+  }finally{isSaving=false;}
 }
 
 // ── Log ───────────────────────────────────────────────────
 async function renderLog(){
   const list=document.getElementById('logList');
-  if(!pins.length){list.innerHTML='<div class="empty"><div>No observations yet.</div><div style="font-size:13px;margin-top:6px;">Go to plan → tap Pin → tap on plan.</div></div>';return;}
-  list.innerHTML=pins.map((p,i)=>{
+  if(!pins.length){list.innerHTML='<div class="empty"><div>No observations yet.</div><div style="font-size:13px;margin-top:6px;">Go to plan → Pin mode → tap to place.</div></div>';return;}
+  const allSorted=[...pins].sort((a,b)=>a.id-b.id);
+  list.innerHTML=allSorted.map((p,i)=>{
     const sc=p.sev||'none',sl=(p.sev||'—').toUpperCase();
-    return`<div class="log-card" onclick="goToPin(${p.id})">
+    return`<div class="log-card" data-pid="${p.id}">
       <div class="sev-dot d-${sc}"></div>
       <div class="log-info">
-        <div class="log-zone">${p.zone||'#'+(i+1)}</div>
+        <div class="log-zone">Pin ${i+1} — ${p.zone||'(no ID)'}</div>
         <div class="log-sub">${p.elems?.join(', ')||''} · ${p.time||''} · Pg ${p.page||1}</div>
         <div class="log-def">${p.defects?.join(', ')||'No defect noted'}</div>
         ${p.dirs?.length?`<div class="log-sub" style="margin-top:2px;">Dir: ${p.dirs.join(', ')}</div>`:''}
@@ -719,18 +850,20 @@ async function renderLog(){
       </div>
       <div class="sev-tag ${sc}">${sl}</div></div>`;
   }).join('');
-  // load thumbs async
-  for(const p of pins){
+  list.querySelectorAll('.log-card').forEach(card=>{
+    card.addEventListener('click',()=>goToPin(parseInt(card.dataset.pid)));
+  });
+  for(const p of allSorted){
     const el=document.getElementById('lp_'+p.id);if(!el)continue;
     for(const pid of(p.photoIds||[]).slice(0,3)){
-      try{const r=await get('photos',pid);if(r&&r.blob){const img=document.createElement('img');img.className='log-thumb';img.src=URL.createObjectURL(r.blob);el.appendChild(img);}}catch(e){}
+      try{const r=await dbGet('photos',pid);if(r&&r.blob){const img=document.createElement('img');img.className='log-thumb';img.src=URL.createObjectURL(r.blob);el.appendChild(img);}}catch(e){}
     }
   }
 }
 
 function goToPin(id){
   const pin=pins.find(p=>p.id===id);
-  if(pin&&pin.page!==curPage){saveAnnotData();curPage=pin.page;renderPDFPage(curPage);}
+  if(pin&&pin.page!==curPage){saveAnnotData();curPage=pin.page;if(pdfDoc)renderPDFPage(curPage);else{restoreAnnotData(curPage);renderPins();}}
   showScreen('planScreen');
 }
 
@@ -743,34 +876,144 @@ function showReport(){
   document.getElementById('reportOverlay').classList.add('open');
 }
 
-async function exportReport(){
-  toast('Building report…',4000);
+// ── Export HTML report ────────────────────────────────────
+async function exportHtmlReport(){
+  toast('Building report…',5000);
+  closeOverlay('reportOverlay');
   const date=new Date().toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'});
   const sc={nil:'#22c55e',minor:'#f59e0b',moderate:'#f97316',critical:'#ef4444','':'#4f8ef7'};
   const sl={nil:'NIL',minor:'MINOR',moderate:'MODERATE',critical:'CRITICAL','':'—'};
+  const allSorted=[...pins].sort((a,b)=>a.id-b.id);
   let rows='';
-  for(const[i,p]of pins.entries()){
+  for(const[i,p]of allSorted.entries()){
     let ph='';
     for(const pid of(p.photoIds||[])){
-      try{const r=await get('photos',pid);if(r&&r.blob){const b64=await new Promise(res=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.readAsDataURL(r.blob);});ph+=`<img src="${b64}" style="width:70px;height:70px;object-fit:cover;border-radius:5px;margin:2px;">`;}}catch(e){}
+      try{const r=await dbGet('photos',pid);if(r&&r.blob){const b64=await blobToB64(r.blob);ph+=`<img src="${b64}" style="width:70px;height:70px;object-fit:cover;border-radius:5px;margin:2px;">`;}}catch(e){}
     }
-    rows+=`<tr><td>${i+1}</td><td><strong>${p.zone||'#'+(i+1)}</strong></td><td>${p.elems?.join(', ')||''}</td><td>${p.dirs?.join(', ')||''}</td><td>${p.defects?.join(', ')||''}</td><td><span style="background:${sc[p.sev||'']};color:${p.sev==='minor'?'#000':'#fff'};padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;">${sl[p.sev||'']}</span></td><td>Pg ${p.page||1}</td><td style="font-size:12px;">${p.remarks||''}</td><td>${ph}</td></tr>`;
+    rows+=`<tr><td>${i+1}</td><td><strong>${p.zone||'—'}</strong></td><td>${p.elems?.join(', ')||''}</td><td>${p.dirs?.join(', ')||''}</td><td>${p.defects?.join(', ')||''}</td><td><span style="background:${sc[p.sev||'']};color:${p.sev==='minor'?'#000':'#fff'};padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;">${sl[p.sev||'']}</span></td><td>Pg ${p.page||1}</td><td style="font-size:12px;">${p.remarks||''}</td><td>${ph}</td></tr>`;
   }
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Inspection — ${projName} — ${date}</title><style>body{font-family:Arial,sans-serif;padding:28px;color:#111;}h1{font-size:20px;margin-bottom:4px;}.sub{font-size:12px;color:#666;margin-bottom:20px;}.stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}.stat{background:#f5f5f5;border-radius:8px;padding:12px 16px;}.stat-n{font-size:20px;font-weight:700;}.stat-l{font-size:11px;color:#888;}table{width:100%;border-collapse:collapse;font-size:13px;}th{text-align:left;padding:8px;background:#f0f0f0;border-bottom:1px solid #ddd;font-size:12px;}td{padding:9px 8px;border-bottom:.5px solid #eee;vertical-align:top;}tr:nth-child(even){background:#fafafa;}</style></head><body><h1>Visual Inspection — ${projName}</h1><div class="sub">Date: ${date} · SiteSnag</div><div class="stats"><div class="stat"><div class="stat-n">${pins.length}</div><div class="stat-l">Total</div></div><div class="stat"><div class="stat-n" style="color:#22c55e">${pins.filter(p=>p.sev==='nil').length}</div><div class="stat-l">Nil</div></div><div class="stat"><div class="stat-n" style="color:#f59e0b">${pins.filter(p=>p.sev==='minor'||p.sev==='moderate').length}</div><div class="stat-l">Minor/Mod</div></div><div class="stat"><div class="stat-n" style="color:#ef4444">${pins.filter(p=>p.sev==='critical').length}</div><div class="stat-l">Critical</div></div></div><table><thead><tr><th>#</th><th>Zone</th><th>Element</th><th>Direction</th><th>Defect</th><th>Severity</th><th>Page</th><th>Remarks</th><th>Photos</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
-  const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`inspection_${projName.replace(/\s+/g,'_')}.html`;a.click();URL.revokeObjectURL(url);toast('✓ Report exported');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Inspection — ${projName} — ${date}</title>
+  <style>body{font-family:Arial,sans-serif;padding:28px;color:#111;}h1{font-size:20px;margin-bottom:4px;}.sub{font-size:12px;color:#666;margin-bottom:20px;}.stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}.stat{background:#f5f5f5;border-radius:8px;padding:12px 16px;}.stat-n{font-size:20px;font-weight:700;}.stat-l{font-size:11px;color:#888;}table{width:100%;border-collapse:collapse;font-size:13px;}th{text-align:left;padding:8px;background:#f0f0f0;border-bottom:1px solid #ddd;font-size:12px;}td{padding:9px 8px;border-bottom:.5px solid #eee;vertical-align:top;}tr:nth-child(even){background:#fafafa;}</style>
+  </head><body>
+  <h1>Visual Inspection — ${projName}</h1>
+  <div class="sub">Date: ${date} · Generated by SiteSnag</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">${pins.length}</div><div class="stat-l">Total pins</div></div>
+    <div class="stat"><div class="stat-n" style="color:#22c55e">${pins.filter(p=>p.sev==='nil').length}</div><div class="stat-l">Nil defect</div></div>
+    <div class="stat"><div class="stat-n" style="color:#f59e0b">${pins.filter(p=>p.sev==='minor'||p.sev==='moderate').length}</div><div class="stat-l">Minor/Mod</div></div>
+    <div class="stat"><div class="stat-n" style="color:#ef4444">${pins.filter(p=>p.sev==='critical').length}</div><div class="stat-l">Critical</div></div>
+  </div>
+  <table><thead><tr><th>Pin#</th><th>Zone/ID</th><th>Element</th><th>Direction</th><th>Defect</th><th>Severity</th><th>Page</th><th>Remarks</th><th>Photos</th></tr></thead>
+  <tbody>${rows}</tbody></table></body></html>`;
+  downloadFile(`inspection_${projName.replace(/\s+/g,'_')}.html`,html,'text/html');
+  toast('✓ Report exported');
+}
+
+// ── Export plan with pin markers ──────────────────────────
+async function exportPlanWithPins(){
+  toast('Building plan export…',5000);
+  closeOverlay('reportOverlay');
+  // Get plan image
+  const planRec=await dbGet('plans',projId).catch(()=>null);
+  const planImg=planRec?.dataUrl||null;
+  const allSorted=[...pins].sort((a,b)=>a.id-b.id);
+  const sevColors={nil:'#22c55e',minor:'#f59e0b',moderate:'#f97316',critical:'#ef4444','':'#4f8ef7'};
+  // Build one HTML page per PDF page that has pins, with plan as background + pin markers
+  const pages=[...new Set(allSorted.map(p=>p.page||1))].sort((a,b)=>a-b);
+  let pageHtml='';
+  for(const pg of pages){
+    const pgPins=allSorted.filter(p=>(p.page||1)===pg);
+    // Get plan snapshot for this page from annotData or planImg
+    const bgImg=annotData[pg]||planImg||'';
+    // We need to know canvas dimensions to position pins correctly
+    // Use stored pin x/y relative to canvas size — we'll render at 800px wide
+    const REF_W=800;
+    // Find the canvas dimensions when plan was rendered (approx from pin coords)
+    // Pins stored as pixel coords on the canvas at render time
+    // We need to normalise — store canvas size in project for accuracy
+    // For now render pins at their stored positions scaled to 800px
+    // Get canvas actual size from planCanvas if still loaded
+    const cv=document.getElementById('planCanvas');
+    const dpr=window.devicePixelRatio||1;
+    const cvW=cv.width/dpr||800,cvH=cv.height/dpr||600;
+    const scaleX=REF_W/cvW,scaleY=(REF_W*(cvH/cvW))/cvH;
+    const refH=Math.round(REF_W*(cvH/cvW));
+    const pinMarkers=pgPins.map(p=>{
+      const num=allSorted.indexOf(p)+1;
+      const col=sevColors[p.sev||'']||'#4f8ef7';
+      const lx=Math.round(p.x*scaleX),ly=Math.round(p.y*scaleY);
+      return`<div style="position:absolute;left:${lx}px;top:${ly}px;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;">
+        <div style="width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${col};display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.5);">
+          <span style="transform:rotate(45deg);font-size:10px;font-weight:700;color:#fff;">${num}</span>
+        </div>
+        <div style="width:2px;height:6px;background:rgba(0,0,0,.4);"></div>
+      </div>`;
+    }).join('');
+    pageHtml+=`<div style="page-break-after:always;margin-bottom:32px;">
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#333;">Page ${pg} — ${pgPins.length} pin${pgPins.length!==1?'s':''}</div>
+      <div style="position:relative;width:${REF_W}px;height:${refH}px;border:1px solid #ddd;overflow:hidden;">
+        ${bgImg?`<img src="${bgImg}" style="width:100%;height:100%;object-fit:fill;">`:'<div style="width:100%;height:100%;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#999;">No plan image</div>'}
+        ${pinMarkers}
+      </div>
+      <table style="width:${REF_W}px;margin-top:12px;border-collapse:collapse;font-size:12px;">
+        <thead><tr style="background:#f0f0f0;"><th style="padding:6px;text-align:left;border-bottom:1px solid #ddd;">Pin#</th><th style="padding:6px;text-align:left;border-bottom:1px solid #ddd;">Zone/ID</th><th style="padding:6px;text-align:left;border-bottom:1px solid #ddd;">Defect</th><th style="padding:6px;text-align:left;border-bottom:1px solid #ddd;">Severity</th><th style="padding:6px;text-align:left;border-bottom:1px solid #ddd;">Remarks</th></tr></thead>
+        <tbody>${pgPins.map(p=>{const num=allSorted.indexOf(p)+1;const col=sevColors[p.sev||''];return`<tr><td style="padding:6px;border-bottom:.5px solid #eee;">${num}</td><td style="padding:6px;border-bottom:.5px solid #eee;">${p.zone||'—'}</td><td style="padding:6px;border-bottom:.5px solid #eee;">${p.defects?.join(', ')||'—'}</td><td style="padding:6px;border-bottom:.5px solid #eee;"><span style="background:${col};color:${p.sev==='minor'?'#000':'#fff'};padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;">${(p.sev||'—').toUpperCase()}</span></td><td style="padding:6px;border-bottom:.5px solid #eee;">${p.remarks||''}</td></tr>`;}).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+  const date=new Date().toLocaleDateString('en-SG',{day:'2-digit',month:'short',year:'numeric'});
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Plan — ${projName}</title>
+  <style>body{font-family:Arial,sans-serif;padding:24px;color:#111;}h1{font-size:18px;margin-bottom:4px;}.sub{font-size:12px;color:#666;margin-bottom:20px;}@media print{body{padding:0;}}</style>
+  </head><body><h1>Inspection Plan — ${projName}</h1><div class="sub">Date: ${date} · Open in browser → Print → Save as PDF</div>${pageHtml}</body></html>`;
+  downloadFile(`plan_pins_${projName.replace(/\s+/g,'_')}.html`,html,'text/html');
+  toast('✓ Plan export done — open in browser & print to PDF');
+}
+
+function blobToB64(blob){
+  return new Promise(res=>{const fr=new FileReader();fr.onload=e=>res(e.target.result);fr.readAsDataURL(blob);});
+}
+function downloadFile(name,content,type){
+  const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);
 }
 
 function newProject(){
   closeOverlay('reportOverlay');
-  if(pins.length>0&&!confirm('Start fresh? Current project stays saved.'))return;
+  if(pins.length>0&&!confirm('Start fresh? Current project is already saved in the list.'))return;
   projId=null;pins=[];annotData={};showScreen('homeScreen');loadProjList();
+}
+
+// ── Bilingual confirm dialog ───────────────────────────────
+function bilingualConfirm(titleEn,titleZh,subEn,subZh){
+  return new Promise(res=>{
+    const modal=document.getElementById('confirmModal');
+    document.getElementById('cmTitleEn').textContent=titleEn;
+    document.getElementById('cmTitleZh').textContent=titleZh;
+    document.getElementById('cmSubEn').textContent=subEn||'';
+    document.getElementById('cmSubZh').textContent=subZh||'';
+    modal.classList.add('open');
+    const yes=document.getElementById('cmYes');
+    const no=document.getElementById('cmNo');
+    function cleanup(val){
+      modal.classList.remove('open');
+      yes.removeEventListener('click',onYes);
+      no.removeEventListener('click',onNo);
+      res(val);
+    }
+    function onYes(){cleanup(true);}
+    function onNo(){cleanup(false);}
+    yes.addEventListener('click',onYes);
+    no.addEventListener('click',onNo);
+  });
 }
 
 // ── Init ──────────────────────────────────────────────────
 openDB().then(()=>{
   loadProjList();
-}).catch(e=>alert('DB failed to open: '+e.message));
+  console.log('SiteSnag ready');
+}).catch(e=>{
+  alert('SiteSnag failed to start. Please make sure you are using Chrome or Safari.\n\nError: '+e.message);
+});
 </script>
 </body>
 </html>
